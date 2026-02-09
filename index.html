@@ -17,25 +17,52 @@
 </head>
 <body class="bg-gray-100 text-gray-800">
 
+<script>
+  // ================= ROLE SYSTEM (DUMMY) =================
+  // Ubah role ke: 'siswa' | 'guru' | 'admin'
+  const USER_ROLE = 'siswa';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-role]').forEach(el => {
+      const allowed = el.dataset.role.split(',');
+      if (!allowed.includes(USER_ROLE)) el.style.display = 'none';
+    });
+
+    const roleLabel = document.getElementById('roleLabel');
+    if (roleLabel) roleLabel.textContent = USER_ROLE.toUpperCase();
+  });
+</script>
+
 <!-- ================= NAVBAR ================= -->
 <header class="sticky top-0 z-50 bg-white shadow">
   <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
     <h1 class="text-xl font-bold text-red-600">🇯🇵 Nihongo Class</h1>
     <nav class="hidden md:flex gap-6 text-sm font-medium">
-      <a href="#dashboard" class="hover:text-red-600">Dashboard</a>
-      <a href="#presensi" class="hover:text-red-600">Presensi</a>
-      <a href="#materi" class="hover:text-red-600">Materi</a>
-      <a href="#jadwal" class="hover:text-red-600">Jadwal</a>
-      <a href="#kalender" class="hover:text-red-600">Kalender</a>
-      <a href="#pengumuman" class="hover:text-red-600">Pengumuman</a>
-      <a href="#akun" class="hover:text-red-600">Akun</a>
+      <span id="roleLabel" class="px-2 py-1 text-xs rounded bg-gray-100 text-gray-600">ROLE</span>
+      <a href="#dashboard" class="hover:text-red-600" data-role="siswa,guru,admin">Dashboard</a>
+      <a href="#presensi" class="hover:text-red-600" data-role="siswa,guru,admin">Presensi</a>
+      <a href="#materi" class="hover:text-red-600" data-role="siswa,guru,admin">Materi</a>
+      <a href="#jadwal" class="hover:text-red-600" data-role="siswa,guru,admin">Jadwal</a>
+      <a href="#kalender" class="hover:text-red-600" data-role="siswa,guru,admin">Kalender</a>
+      <a href="#pengumuman" class="hover:text-red-600" data-role="siswa,guru,admin">Pengumuman</a>
+      <a href="#akun" class="hover:text-red-600" data-role="siswa,guru,admin">Akun</a>
     </nav>
     <button class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Logout</button>
   </div>
 </header>
 
-<!-- ================= DASHBOARD ================= -->
-<section id="dashboard" class="max-w-7xl mx-auto px-6 py-10">
+<!-- ================= LOGIN (DUMMY) ================= -->
+<section id="login" class="max-w-md mx-auto px-6 py-20">
+  <div class="bg-white p-8 rounded shadow">
+    <h2 class="text-2xl font-semibold text-center mb-6">Login LMS</h2>
+    <input type="email" placeholder="Email" class="w-full border p-2 rounded mb-4" />
+    <input type="password" placeholder="Password" class="w-full border p-2 rounded mb-4" />
+    <button class="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700">Login</button>
+    <p class="text-xs text-gray-400 mt-4 text-center">Demo: siswa@guru.com</p>
+  </div>
+</section>
+
+<section id="dashboard" class="max-w-7xl mx-auto px-6 py-10"> class="max-w-7xl mx-auto px-6 py-10">
   <h2 class="text-2xl font-semibold mb-6">Selamat datang, Ay 👋</h2>
 
   <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -90,6 +117,25 @@
 </section>
 
 <!-- ================= MATERI ================= -->
+<!-- ================= GURU PANEL ================= -->
+<section id="guru-panel" class="max-w-7xl mx-auto px-6 py-10" data-role="guru,admin">
+  <h2 class="text-xl font-semibold mb-4">Panel Guru</h2>
+  <div class="bg-white p-6 rounded shadow">
+    <h3 class="font-semibold mb-2">Upload Materi</h3>
+    <input type="file" class="mb-4" />
+    <button class="bg-red-600 text-white px-4 py-2 rounded">Upload</button>
+  </div>
+</section>
+
+<!-- ================= ADMIN PANEL ================= -->
+<section id="admin-panel" class="max-w-7xl mx-auto px-6 py-10" data-role="admin">
+  <h2 class="text-xl font-semibold mb-4">Panel Admin</h2>
+  <div class="bg-white p-6 rounded shadow">
+    <p class="mb-2">Kelola User & Jadwal</p>
+    <button class="bg-gray-800 text-white px-4 py-2 rounded">Manajemen User</button>
+  </div>
+</section>
+
 <section id="materi" class="max-w-7xl mx-auto px-6 py-10">
   <h2 class="text-xl font-semibold mb-4">Materi Pembelajaran</h2>
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
