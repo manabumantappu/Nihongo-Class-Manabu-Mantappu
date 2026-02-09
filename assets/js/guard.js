@@ -1,14 +1,17 @@
-// GUARD SEDERHANA (AMAN GITHUB PAGES)
-
-// cek login
 const isLogin = localStorage.getItem("login");
+const role = localStorage.getItem("role");
 
-// jika belum login, lempar ke index (login)
+// belum login → balik ke login
 if (!isLogin) {
-  // cek apakah sedang di admin atau root
   if (location.pathname.includes("/admin/")) {
     location.href = "../index.html";
   } else {
     location.href = "index.html";
   }
+}
+
+// proteksi admin
+if (location.pathname.includes("/admin/") && role !== "admin") {
+  alert("Akses ditolak. Khusus admin.");
+  location.href = "../dashboard.html";
 }
