@@ -1,36 +1,41 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Admin Dashboard</title>
+  <meta charset="UTF-8" />
+  <title>Login LMS</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
-<script src="../assets/js/role.js"></script>
+<div class="bg-white p-8 rounded shadow w-full max-w-md">
+  <h2 class="text-2xl font-semibold text-center mb-6">Login LMS</h2>
 
-<script src="../assets/js/guard.js"></script>
-  
-<div class="max-w-7xl mx-auto p-6">
-  <h1 class="text-2xl font-semibold mb-6">Dashboard Admin</h1>
+  <input
+    id="email"
+    type="email"
+    placeholder="Email"
+    class="w-full border p-3 rounded mb-4"
+  />
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <a href="users.html" class="bg-white p-6 rounded shadow hover:bg-gray-50">
-      <h3 class="font-semibold">Manajemen User</h3>
-      <p class="text-sm text-gray-500">Siswa & Guru</p>
-    </a>
+  <input
+    id="password"
+    type="password"
+    placeholder="Password"
+    class="w-full border p-3 rounded mb-6"
+  />
 
-    <a href="jadwal.html" class="bg-white p-6 rounded shadow hover:bg-gray-50">
-      <h3 class="font-semibold">Manajemen Jadwal</h3>
-      <p class="text-sm text-gray-500">Kelas & Pengajar</p>
-    </a>
+  <button
+    onclick="login()"
+    class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded"
+  >
+    Login
+  </button>
 
-    <div class="bg-white p-6 rounded shadow">
-      <h3 class="font-semibold">Pengumuman</h3>
-      <p class="text-sm text-gray-500">Tambah & Edit</p>
-    </div>
-  </div>
+  <p class="text-sm text-gray-500 text-center mt-4">
+    Demo: siswa@guru.com / admin@guru.com
+  </p>
 </div>
 
- </body>
+<script src="assets/js/auth.js"></script>
+</body>
 </html>
