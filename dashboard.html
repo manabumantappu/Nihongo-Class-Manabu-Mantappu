@@ -9,6 +9,11 @@
 
 <body class="bg-gray-100">
 
+  <a href="admin/index.html"
+   class="admin-only bg-red-600 text-white p-4 rounded shadow">
+   Admin Panel
+</a>
+
 <!-- ROLE JS BOLEH, TIDAK ERROR -->
 <script src="assets/js/role.js"></script>
 
@@ -32,6 +37,15 @@
 
   <a href="akun.html" class="text-blue-600">Akun Saya</a>
 </div>
+
+  <script>
+  const role = localStorage.getItem("role");
+  if (role !== "admin") {
+    document.querySelectorAll(".admin-only").forEach(el => {
+      el.style.display = "none";
+    });
+  }
+</script>
 
 </body>
 </html>
