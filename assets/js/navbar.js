@@ -1,13 +1,18 @@
 document.addEventListener("DOMContentLoaded", () => {
   const role = localStorage.getItem("role") || "siswa";
 
+  // cek apakah sedang di folder /admin
+  const isAdminPage = location.pathname.includes("/admin/");
+
+  // helper path
+  const p = (file) => isAdminPage ? `../${file}` : file;
+
   const navbar = `
 <header class="sticky top-0 z-50 bg-white shadow">
   <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
 
     <!-- LOGO -->
     <div class="flex items-center gap-2">
-      <span class="text-2xl">🇯🇵</span>
       <span class="text-lg font-bold text-red-600">JP Nihongo Class</span>
     </div>
 
@@ -17,17 +22,17 @@ document.addEventListener("DOMContentLoaded", () => {
         ${role.toUpperCase()}
       </span>
 
-      <a href="dashboard.html" class="hover:text-red-600">Dashboard</a>
-      <a href="presensi.html" class="hover:text-red-600">Presensi</a>
-      <a href="materi.html" class="hover:text-red-600">Materi</a>
-      <a href="jadwal.html" class="hover:text-red-600">Jadwal</a>
-      <a href="kalender.html" class="hover:text-red-600">Kalender</a>
-      <a href="pengumuman.html" class="hover:text-red-600">Pengumuman</a>
-      <a href="akun.html" class="hover:text-red-600">Akun</a>
+      <a href="${p("dashboard.html")}" class="hover:text-red-600">Dashboard</a>
+      <a href="${p("presensi.html")}" class="hover:text-red-600">Presensi</a>
+      <a href="${p("materi.html")}" class="hover:text-red-600">Materi</a>
+      <a href="${p("jadwal.html")}" class="hover:text-red-600">Jadwal</a>
+      <a href="${p("kalender.html")}" class="hover:text-red-600">Kalender</a>
+      <a href="${p("pengumuman.html")}" class="hover:text-red-600">Pengumuman</a>
+      <a href="${p("akun.html")}" class="hover:text-red-600">Akun</a>
 
       ${
         role === "admin"
-          ? `<a href="admin/index.html" class="text-red-600 font-semibold">Admin</a>`
+          ? `<a href="${p("admin/index.html")}" class="text-red-600 font-semibold">Admin</a>`
           : ""
       }
     </nav>
