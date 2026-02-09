@@ -7,20 +7,14 @@ function login() {
     return;
   }
 
-  // default role
   let role = "siswa";
+  if (email.includes("admin")) role = "admin";
 
-  // rule sederhana (bebas kamu ubah)
-  if (email.includes("admin")) {
-    role = "admin";
-  }
-
-  // simpan status login
   localStorage.setItem("login", "true");
   localStorage.setItem("role", role);
   localStorage.setItem("email", email);
 
-  // redirect
+  // 🔴 PINDAH KE DASHBOARD
   window.location.href = "dashboard.html";
 }
 
