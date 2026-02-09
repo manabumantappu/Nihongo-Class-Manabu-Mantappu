@@ -1,29 +1,25 @@
 function login() {
-  const email = document.getElementById("email").value.trim();
+  const emailInput = document.getElementById("email");
+  const email = emailInput ? emailInput.value : "";
 
-  if (!email) {
-    alert("Masukkan email");
-    return;
+  // default role
+  let role = "siswa";
+
+  // simple rule (bisa kamu ganti)
+  if (email.includes("admin")) {
+    role = "admin";
   }
 
-  let role = "siswa";
-  if (email.includes("guru")) role = "guru";
-  if (email.includes("admin")) role = "admin";
-
-  localStorage.setItem("auth", JSON.stringify({
-    email,
-    role
-  }));
+  // simpan login & role
+  localStorage.setItem("login", "true");
+  localStorage.setItem("role", role);
 
   // redirect
-  if (role === "admin") {
-    location.href = "admin/index.html";
-  } else {
-    location.href = "dashboard.html";
-  }
+  window.location.href = "dashboard.html";
 }
 
 function logout() {
-  localStorage.clear();
-  location.href = "../index.html";
+  localStorage.removeItem("login");
+  localStorage.removeItem("role");
+  window.location.href = "index.html";
 }
