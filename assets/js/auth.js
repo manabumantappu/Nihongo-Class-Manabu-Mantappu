@@ -14,11 +14,11 @@ function login() {
   localStorage.setItem("role", role);
   localStorage.setItem("email", email);
 
-  // 🔴 PINDAH KE DASHBOARD
-  window.location.href = "dashboard.html";
+  // RELATIF
+  location.href = "dashboard.html";
 }
 
 function logout() {
   localStorage.clear();
-  window.location.href = "index.html";
+  location.href = "index.html";
 }
