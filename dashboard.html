@@ -3,23 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <title>Dashboard</title>
-<script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
+
 <body class="bg-gray-100">
 
+<!-- ROLE JS BOLEH, TIDAK ERROR -->
 <script src="assets/js/role.js"></script>
-
-<script type="module" src="assets/js/guard.js"></script>
 
 <div class="max-w-7xl mx-auto p-6">
   <h1 class="text-2xl font-semibold mb-6">Dashboard</h1>
 
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-    <div class="bg-white p-4 rounded shadow">Kehadiran</div>
-    <div class="bg-white p-4 rounded shadow">Materi</div>
-    <div class="bg-white p-4 rounded shadow">Jadwal</div>
-    <div class="bg-white p-4 rounded shadow">Pengumuman</div>
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <a href="presensi.html" class="bg-white p-4 rounded shadow hover:bg-gray-50">
+      Presensi
+    </a>
+    <a href="materi.html" class="bg-white p-4 rounded shadow hover:bg-gray-50">
+      Materi
+    </a>
+    <a href="jadwal.html" class="bg-white p-4 rounded shadow hover:bg-gray-50">
+      Jadwal
+    </a>
+    <a href="pengumuman.html" class="bg-white p-4 rounded shadow hover:bg-gray-50">
+      Pengumuman
+    </a>
   </div>
+
+  <a href="akun.html" class="text-blue-600">Akun Saya</a>
 </div>
 
 </body>
