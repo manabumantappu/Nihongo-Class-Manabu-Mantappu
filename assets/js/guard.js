@@ -1,7 +1,7 @@
 const isLogin = localStorage.getItem("login");
 const role = localStorage.getItem("role");
 
-// belum login → balik ke login
+// belum login
 if (!isLogin) {
   if (location.pathname.includes("/admin/")) {
     location.href = "../index.html";
