@@ -1,10 +1,14 @@
-import { auth } from "./firebase.js";
-import { onAuthStateChanged } 
-  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+// GUARD SEDERHANA (AMAN GITHUB PAGES)
 
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    // belum login → balik ke login
+// cek login
+const isLogin = localStorage.getItem("login");
+
+// jika belum login, lempar ke index (login)
+if (!isLogin) {
+  // cek apakah sedang di admin atau root
+  if (location.pathname.includes("/admin/")) {
+    location.href = "../index.html";
+  } else {
     location.href = "index.html";
   }
-});
+}
