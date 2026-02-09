@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Rekap Presensi</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+<script src="../assets/js/guard.js"></script>
+
+<div class="max-w-7xl mx-auto p-6">
+  <h1 class="text-2xl font-semibold mb-6">Rekap Presensi Siswa</h1>
+
+  <table class="w-full bg-white rounded shadow text-sm">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="p-3 text-left">Email</th>
+        <th class="p-3">Waktu</th>
+        <th class="p-3">Status</th>
+      </tr>
+    </thead>
+    <tbody id="rekap"></tbody>
+  </table>
+
+  <button
+    onclick="clearData()"
+    class="mt-6 bg-red-600 text-white px-4 py-2 rounded"
+  >
+    Hapus Semua Presensi
+  </button>
+</div>
+
+<script src="../assets/js/admin-presensi.js"></script>
+</body>
+</html>
