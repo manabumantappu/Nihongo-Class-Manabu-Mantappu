@@ -1,15 +1,15 @@
 const isLogin = localStorage.getItem("login");
 const role = localStorage.getItem("role");
 
-// cek apakah di folder admin
+// cek apakah halaman admin
 const isAdminPage = location.pathname.includes("/admin/");
 
-// helper redirect ke login (SELALU BENAR)
+// redirect RELATIF (AMAN UNTUK GITHUB PAGES PROJECT)
 function goLogin() {
   location.href = isAdminPage ? "../index.html" : "index.html";
 }
 
-// belum login → ke login
+// belum login
 if (!isLogin) {
   goLogin();
 }
