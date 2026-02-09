@@ -4,24 +4,33 @@
   <meta charset="UTF-8">
   <title>Presensi</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
+
 <body class="bg-gray-100">
 
-<script src="assets/js/role.js"></script>
+<script src="assets/js/presensi.js"></script>
 
-<script type="module" src="assets/js/guard.js"></script>
-  
-<div class="max-w-5xl mx-auto p-6">
+<div class="max-w-6xl mx-auto p-6">
   <h1 class="text-xl font-semibold mb-4">Presensi</h1>
 
-  <button id="masuk" class="bg-green-600 text-white px-4 py-2 rounded">Absen Masuk</button>
-  <button id="pulang" class="bg-blue-600 text-white px-4 py-2 rounded ml-2">Absen Pulang</button>
+  <div class="flex gap-3 mb-4">
+    <button id="masuk" class="bg-green-600 text-white px-4 py-2 rounded">
+      Absen Masuk
+    </button>
+    <button id="pulang" class="bg-blue-600 text-white px-4 py-2 rounded">
+      Absen Pulang
+    </button>
+  </div>
 
-  <table class="w-full mt-6 text-sm">
+  <table class="w-full bg-white rounded shadow text-sm">
     <tbody id="table"></tbody>
   </table>
+
+  <a href="dashboard.html" class="inline-block mt-6 text-blue-600">
+    ← Kembali ke Dashboard
+  </a>
 </div>
 
-<script src="assets/js/presensi.js"></script>
 </body>
 </html>
