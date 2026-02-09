@@ -1,7 +1,14 @@
-const role = localStorage.getItem('role');
+const auth = JSON.parse(localStorage.getItem("auth"));
 
-if (!role) {
-  location.href = 'index.html';
+if (!auth) {
+  location.href = "../index.html";
 }
 
-console.log('ROLE:', role);
+// proteksi halaman admin
+if (location.pathname.includes("/admin") && auth.role !== "admin") {
+  alert("Akses ditolak");
+  location.href = "../dashboard.html";
+}
+
+// expose role (optional)
+console.log("LOGIN AS:", auth.role);
