@@ -12,6 +12,37 @@
 <div class="max-w-7xl mx-auto p-6">
   <h1 class="text-2xl font-semibold mb-6">Rekap Presensi Siswa</h1>
 
+  <!-- FILTER -->
+  <div class="bg-white p-4 rounded shadow mb-6 flex flex-col md:flex-row gap-4">
+    <input
+      id="filterEmail"
+      type="text"
+      placeholder="Filter email siswa"
+      class="border p-2 rounded w-full md:w-1/3"
+    />
+
+    <input
+      id="filterDate"
+      type="date"
+      class="border p-2 rounded w-full md:w-1/4"
+    />
+
+    <button
+      onclick="applyFilter()"
+      class="bg-blue-600 text-white px-4 py-2 rounded"
+    >
+      Filter
+    </button>
+
+    <button
+      onclick="resetFilter()"
+      class="bg-gray-500 text-white px-4 py-2 rounded"
+    >
+      Reset
+    </button>
+  </div>
+
+  <!-- TABLE -->
   <table class="w-full bg-white rounded shadow text-sm">
     <thead class="bg-gray-100">
       <tr>
