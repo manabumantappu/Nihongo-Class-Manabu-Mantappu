@@ -15,9 +15,12 @@
   <h1 class="text-2xl font-bold mb-4">👥 Manajemen User</h1>
 
   <div class="bg-white rounded shadow p-4">
-    <p class="text-gray-600 mb-4">
-      Halaman ini digunakan untuk mengelola data user (admin, guru, siswa).
-    </p>
+
+    <!-- TOMBOL TAMBAH -->
+    <button onclick="openAddUser()"
+      class="mb-4 bg-green-500 text-white px-4 py-2 rounded">
+      + Tambah User
+    </button>
 
     <table class="w-full border">
       <thead class="bg-gray-200">
@@ -28,42 +31,20 @@
           <th class="border p-2">Aksi</th>
         </tr>
       </thead>
-     
-       <tbody id="userTable"></tbody>
-          <td id="nama-user-1" class="border p-2">Demo User</td>
-          <td id="email-user-1" class="border p-2">demo@siswajepang.com</td>
-          <td id="role-user-1" class="border p-2">Siswa</td>
-          <td class="border p-2 text-center">
-            <button
-              onclick="openEditUser(1)"
-              class="bg-blue-500 text-white px-3 py-1 rounded text-sm">
-              Edit
-            </button>
-            <button onclick="openAddUser()"
-  class="mb-4 bg-green-500 text-white px-4 py-2 rounded">
-  + Tambah User
-</button>
-          </td>
-        </tr>
-      </tbody>
+      <tbody id="userTable"></tbody>
     </table>
   </div>
 </div>
 
 <!-- MODAL EDIT USER -->
 <div id="editModal"
-     class="fixed inset-0 bg-black bg-opacity-40 hidden flex items-center justify-center">
-
+ class="fixed inset-0 bg-black bg-opacity-40 hidden flex items-center justify-center">
   <div class="bg-white w-full max-w-md rounded p-6">
     <h2 class="text-xl font-semibold mb-4">Edit User</h2>
 
-    <label class="block mb-2 text-sm">Nama</label>
     <input id="editNama" class="w-full border p-2 rounded mb-3">
-
-    <label class="block mb-2 text-sm">Email</label>
     <input id="editEmail" class="w-full border p-2 rounded mb-3">
 
-    <label class="block mb-2 text-sm">Role</label>
     <select id="editRole" class="w-full border p-2 rounded mb-4">
       <option>Admin</option>
       <option>Guru</option>
@@ -71,26 +52,25 @@
     </select>
 
     <div class="flex justify-end gap-2">
-      <button onclick="closeEditUser()" class="px-4 py-2 border rounded">
+      <button onclick="closeEditUser()" class="border px-4 py-2 rounded">
         Batal
       </button>
-      <button onclick="saveEditUser()" class="px-4 py-2 bg-blue-500 text-white rounded">
+      <button onclick="saveEditUser()"
+        class="bg-blue-500 text-white px-4 py-2 rounded">
         Simpan
       </button>
     </div>
   </div>
 </div>
 
-  <!-- MODAL TAMBAH USER -->
+<!-- MODAL TAMBAH USER -->
 <div id="addModal"
  class="fixed inset-0 bg-black bg-opacity-40 hidden flex items-center justify-center">
-
   <div class="bg-white w-full max-w-md rounded p-6">
     <h2 class="text-xl font-semibold mb-4">Tambah User</h2>
 
     <input id="addNama" placeholder="Nama"
       class="w-full border p-2 rounded mb-3">
-
     <input id="addEmail" placeholder="Email"
       class="w-full border p-2 rounded mb-3">
 
@@ -101,11 +81,11 @@
     </select>
 
     <div class="flex justify-end gap-2">
-      <button onclick="closeAddUser()" class="px-4 py-2 border rounded">
+      <button onclick="closeAddUser()" class="border px-4 py-2 rounded">
         Batal
       </button>
       <button onclick="saveAddUser()"
-        class="px-4 py-2 bg-green-500 text-white rounded">
+        class="bg-green-500 text-white px-4 py-2 rounded">
         Simpan
       </button>
     </div>
@@ -113,10 +93,11 @@
 </div>
 
 <script>
-let users = JSON.parse(localStorage.getItem("users")) || [];
+let users = JSON.parse(localStorage.getItem("users")) || [
+  { id: 1, nama: "Demo User", email: "demo@siswajepang.com", role: "Siswa" }
+];
 let currentUserId = null;
 
-/* ===== RENDER TABLE ===== */
 function renderTable() {
   const tbody = document.getElementById("userTable");
   tbody.innerHTML = "";
@@ -144,12 +125,11 @@ function renderTable() {
   localStorage.setItem("users", JSON.stringify(users));
 }
 
-/* ===== TAMBAH USER ===== */
 function openAddUser() {
-  document.getElementById("addModal").classList.remove("hidden");
+  addModal.classList.remove("hidden");
 }
 function closeAddUser() {
-  document.getElementById("addModal").classList.add("hidden");
+  addModal.classList.add("hidden");
 }
 function saveAddUser() {
   users.push({
@@ -162,41 +142,34 @@ function saveAddUser() {
   renderTable();
 }
 
-/* ===== EDIT USER ===== */
 function openEditUser(id) {
   currentUserId = id;
-  const user = users.find(u => u.id === id);
-
-  editNama.value = user.nama;
-  editEmail.value = user.email;
-  editRole.value = user.role;
-
+  const u = users.find(x => x.id === id);
+  editNama.value = u.nama;
+  editEmail.value = u.email;
+  editRole.value = u.role;
   editModal.classList.remove("hidden");
 }
 function closeEditUser() {
   editModal.classList.add("hidden");
 }
 function saveEditUser() {
-  const user = users.find(u => u.id === currentUserId);
-  user.nama = editNama.value;
-  user.email = editEmail.value;
-  user.role = editRole.value;
-
+  const u = users.find(x => x.id === currentUserId);
+  u.nama = editNama.value;
+  u.email = editEmail.value;
+  u.role = editRole.value;
   closeEditUser();
   renderTable();
 }
 
-/* ===== HAPUS USER ===== */
 function deleteUser(id) {
   if (!confirm("Yakin ingin menghapus user ini?")) return;
   users = users.filter(u => u.id !== id);
   renderTable();
 }
 
-/* INIT */
 renderTable();
 </script>
-
 
 </body>
 </html>
