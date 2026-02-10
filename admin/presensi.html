@@ -6,6 +6,40 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
+<h2 class="text-xl font-semibold mb-4">Rekap Presensi</h2>
+
+<div class="flex gap-4 mb-4">
+  <input type="text" placeholder="Nama siswa"
+    class="border p-2 rounded w-48">
+
+  <input type="date"
+    class="border p-2 rounded">
+
+  <button class="bg-red-600 text-white px-4 py-2 rounded">
+    Filter
+  </button>
+</div>
+
+<table class="w-full bg-white rounded shadow text-sm">
+  <thead class="bg-gray-100">
+    <tr>
+      <th class="p-2">Nama</th>
+      <th class="p-2">Tanggal</th>
+      <th class="p-2">Masuk</th>
+      <th class="p-2">Pulang</th>
+      <th class="p-2">Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="border-t">
+      <td class="p-2">Ay</td>
+      <td class="p-2">2026-02-10</td>
+      <td class="p-2">09:00</td>
+      <td class="p-2">11:00</td>
+      <td class="p-2 text-green-600">Hadir</td>
+    </tr>
+  </tbody>
+</table>
 
 <script src="../assets/js/guard.js"></script>
 <script src="../assets/js/navbar.js"></script>
