@@ -96,6 +96,37 @@ function saveEditUser() {
   alert("Data user berhasil diubah (dummy)");
   closeEditUser();
 }
+
+let currentUserId = null;
+
+function openEditUser(id) {
+  currentUserId = id;
+
+  document.getElementById("editNama").value =
+    document.getElementById("nama-user-" + id).innerText;
+
+  document.getElementById("editEmail").value =
+    document.getElementById("email-user-" + id).innerText;
+
+  document.getElementById("editRole").value =
+    document.getElementById("role-user-" + id).innerText;
+
+  document.getElementById("editModal").classList.remove("hidden");
+}
+
+function saveEditUser() {
+  const nama  = document.getElementById("editNama").value;
+  const email = document.getElementById("editEmail").value;
+  const role  = document.getElementById("editRole").value;
+
+  // update tabel
+  document.getElementById("nama-user-" + currentUserId).innerText = nama;
+  document.getElementById("email-user-" + currentUserId).innerText = email;
+  document.getElementById("role-user-" + currentUserId).innerText = role;
+
+  closeEditUser();
+}
+    
 </script>
 
 </body>
