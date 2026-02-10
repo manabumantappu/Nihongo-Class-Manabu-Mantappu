@@ -30,22 +30,88 @@
       </thead>
       <tbody>
         <tr>
-          <td class="border p-2">2026-02-10</td>
-          <td class="border p-2">N5 A</td>
-          <td class="border p-2">08:00 - 10:00</td>
-          <td class="border p-2 text-center">
-            <button
-  onclick="openEditJadwal(1)"
-  class="bg-green-500 text-white px-3 py-1 rounded text-sm">
-  Edit
-</button>
-
+  <td id="tgl-1" class="border p-2">2026-02-10</td>
+  <td id="kelas-1" class="border p-2">N5 A</td>
+  <td id="jam-1" class="border p-2">08:00 - 10:00</td>
+  <td class="border p-2 text-center">
+    <button onclick="openEditJadwal(1)"
+      class="bg-green-500 text-white px-3 py-1 rounded text-sm">
+       Edit
+           </button>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 </div>
+<!-- MODAL EDIT JADWAL -->
+<div id="editJadwalModal"
+ class="fixed inset-0 bg-black bg-opacity-40 hidden flex items-center justify-center">
+
+  <div class="bg-white w-full max-w-md rounded p-6">
+    <h2 class="text-xl font-semibold mb-4">Edit Jadwal</h2>
+
+    <label class="block mb-1 text-sm">Tanggal</label>
+    <input id="editTanggal" type="date"
+      class="w-full border p-2 rounded mb-3">
+
+    <label class="block mb-1 text-sm">Kelas</label>
+    <input id="editKelas"
+      class="w-full border p-2 rounded mb-3">
+
+    <label class="block mb-1 text-sm">Jam</label>
+    <input id="editJam"
+      class="w-full border p-2 rounded mb-4">
+
+    <div class="flex justify-end gap-2">
+      <button onclick="closeEditJadwal()"
+        class="px-4 py-2 border rounded">
+        Batal
+      </button>
+      <button onclick="saveEditJadwal()"
+        class="px-4 py-2 bg-green-500 text-white rounded">
+        Simpan
+      </button>
+    </div>
+  </div>
+</div>
+
+  <script>
+let jadwals = [
+  { id: 1, tanggal: "2026-02-10", kelas: "N5 A", jam: "08:00 - 10:00" }
+];
+let currentJadwalId = null;
+
+function openEditJadwal(id) {
+  currentJadwalId = id;
+  const j = jadwals.find(x => x.id === id);
+
+  editTanggal.value = j.tanggal;
+  editKelas.value = j.kelas;
+  editJam.value = j.jam;
+
+  editJadwalModal.classList.remove("hidden");
+}
+
+function closeEditJadwal() {
+  editJadwalModal.classList.add("hidden");
+}
+
+function saveEditJadwal() {
+  const j = jadwals.find(x => x.id === currentJadwalId);
+
+  j.tanggal = editTanggal.value;
+  j.kelas = editKelas.value;
+  j.jam = editJam.value;
+
+  // update tabel langsung
+  document.getElementById("tgl-1").innerText = j.tanggal;
+  document.getElementById("kelas-1").innerText = j.kelas;
+  document.getElementById("jam-1").innerText = j.jam;
+
+  closeEditJadwal();
+}
+</script>
 
 </body>
 </html>
