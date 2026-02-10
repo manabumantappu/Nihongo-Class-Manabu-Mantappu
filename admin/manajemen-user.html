@@ -126,7 +126,12 @@ function saveEditUser() {
 
   closeEditUser();
 }
-    
+
+    localStorage.setItem(
+  "user_" + currentUserId,
+  JSON.stringify({ nama, email, role })
+);
+
 </script>
 
 </body>
