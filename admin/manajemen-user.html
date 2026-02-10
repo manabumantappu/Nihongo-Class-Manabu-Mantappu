@@ -28,8 +28,8 @@
           <th class="border p-2">Aksi</th>
         </tr>
       </thead>
-      <tbody>
-        <tr id="row-user-1">
+     
+       <tbody id="userTable"></tbody>
           <td id="nama-user-1" class="border p-2">Demo User</td>
           <td id="email-user-1" class="border p-2">demo@siswajepang.com</td>
           <td id="role-user-1" class="border p-2">Siswa</td>
@@ -81,61 +81,122 @@
   </div>
 </div>
 
+  <!-- MODAL TAMBAH USER -->
+<div id="addModal"
+ class="fixed inset-0 bg-black bg-opacity-40 hidden flex items-center justify-center">
+
+  <div class="bg-white w-full max-w-md rounded p-6">
+    <h2 class="text-xl font-semibold mb-4">Tambah User</h2>
+
+    <input id="addNama" placeholder="Nama"
+      class="w-full border p-2 rounded mb-3">
+
+    <input id="addEmail" placeholder="Email"
+      class="w-full border p-2 rounded mb-3">
+
+    <select id="addRole" class="w-full border p-2 rounded mb-4">
+      <option>Admin</option>
+      <option>Guru</option>
+      <option>Siswa</option>
+    </select>
+
+    <div class="flex justify-end gap-2">
+      <button onclick="closeAddUser()" class="px-4 py-2 border rounded">
+        Batal
+      </button>
+      <button onclick="saveAddUser()"
+        class="px-4 py-2 bg-green-500 text-white rounded">
+        Simpan
+      </button>
+    </div>
+  </div>
+</div>
+
 <script>
+let users = JSON.parse(localStorage.getItem("users")) || [];
 let currentUserId = null;
 
-// buka modal + isi data
+/* ===== RENDER TABLE ===== */
+function renderTable() {
+  const tbody = document.getElementById("userTable");
+  tbody.innerHTML = "";
+
+  users.forEach(user => {
+    tbody.innerHTML += `
+      <tr>
+        <td class="border p-2">${user.nama}</td>
+        <td class="border p-2">${user.email}</td>
+        <td class="border p-2">${user.role}</td>
+        <td class="border p-2 text-center space-x-2">
+          <button onclick="openEditUser(${user.id})"
+            class="bg-blue-500 text-white px-3 py-1 rounded text-sm">
+            Edit
+          </button>
+          <button onclick="deleteUser(${user.id})"
+            class="bg-red-500 text-white px-3 py-1 rounded text-sm">
+            Hapus
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+
+  localStorage.setItem("users", JSON.stringify(users));
+}
+
+/* ===== TAMBAH USER ===== */
+function openAddUser() {
+  document.getElementById("addModal").classList.remove("hidden");
+}
+function closeAddUser() {
+  document.getElementById("addModal").classList.add("hidden");
+}
+function saveAddUser() {
+  users.push({
+    id: Date.now(),
+    nama: addNama.value,
+    email: addEmail.value,
+    role: addRole.value
+  });
+  closeAddUser();
+  renderTable();
+}
+
+/* ===== EDIT USER ===== */
 function openEditUser(id) {
   currentUserId = id;
+  const user = users.find(u => u.id === id);
 
-  document.getElementById("editNama").value =
-    document.getElementById("nama-user-" + id).innerText;
+  editNama.value = user.nama;
+  editEmail.value = user.email;
+  editRole.value = user.role;
 
-  document.getElementById("editEmail").value =
-    document.getElementById("email-user-" + id).innerText;
-
-  document.getElementById("editRole").value =
-    document.getElementById("role-user-" + id).innerText;
-
-  document.getElementById("editModal").classList.remove("hidden");
+  editModal.classList.remove("hidden");
 }
-
-// tutup modal
 function closeEditUser() {
-  document.getElementById("editModal").classList.add("hidden");
+  editModal.classList.add("hidden");
 }
-
-// simpan perubahan
 function saveEditUser() {
-  const nama  = document.getElementById("editNama").value;
-  const email = document.getElementById("editEmail").value;
-  const role  = document.getElementById("editRole").value;
-
-  // update tabel
-  document.getElementById("nama-user-" + currentUserId).innerText = nama;
-  document.getElementById("email-user-" + currentUserId).innerText = email;
-  document.getElementById("role-user-" + currentUserId).innerText = role;
-
-  // simpan ke localStorage
-  localStorage.setItem(
-    "user_" + currentUserId,
-    JSON.stringify({ nama, email, role })
-  );
+  const user = users.find(u => u.id === currentUserId);
+  user.nama = editNama.value;
+  user.email = editEmail.value;
+  user.role = editRole.value;
 
   closeEditUser();
+  renderTable();
 }
 
-// load data saat refresh
-window.onload = function () {
-  const data = localStorage.getItem("user_1");
-  if (data) {
-    const user = JSON.parse(data);
-    document.getElementById("nama-user-1").innerText = user.nama;
-    document.getElementById("email-user-1").innerText = user.email;
-    document.getElementById("role-user-1").innerText = user.role;
-  }
-};
+/* ===== HAPUS USER ===== */
+function deleteUser(id) {
+  if (!confirm("Yakin ingin menghapus user ini?")) return;
+  users = users.filter(u => u.id !== id);
+  renderTable();
+}
+
+/* INIT */
+renderTable();
 </script>
+
 
 </body>
 </html>
