@@ -30,23 +30,22 @@
       </thead>
       <tbody>
         <tr id="row-user-1">
-  <td id="nama-user-1" class="border p-2">Demo User</td>
-  <td id="email-user-1" class="border p-2">demo@siswajepang.com</td>
-  <td id="role-user-1" class="border p-2">Siswa</td>
-  <td class="border p-2 text-center">
-    <button
-      onclick="openEditUser(1)"
-      class="bg-blue-500 text-white px-3 py-1 rounded text-sm">
-      Edit
-    </button>
-  </td>
-</tr>
+          <td id="nama-user-1" class="border p-2">Demo User</td>
+          <td id="email-user-1" class="border p-2">demo@siswajepang.com</td>
+          <td id="role-user-1" class="border p-2">Siswa</td>
+          <td class="border p-2 text-center">
+            <button
+              onclick="openEditUser(1)"
+              class="bg-blue-500 text-white px-3 py-1 rounded text-sm">
+              Edit
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 </div>
+
 <!-- MODAL EDIT USER -->
 <div id="editModal"
      class="fixed inset-0 bg-black bg-opacity-40 hidden flex items-center justify-center">
@@ -68,37 +67,20 @@
     </select>
 
     <div class="flex justify-end gap-2">
-      <button onclick="closeEditUser()"
-              class="px-4 py-2 border rounded">
+      <button onclick="closeEditUser()" class="px-4 py-2 border rounded">
         Batal
       </button>
-      <button onclick="saveEditUser()"
-              class="px-4 py-2 bg-blue-500 text-white rounded">
+      <button onclick="saveEditUser()" class="px-4 py-2 bg-blue-500 text-white rounded">
         Simpan
       </button>
     </div>
   </div>
 </div>
 
-  <script>
-function openEditUser(nama, email, role) {
-  document.getElementById("editNama").value = nama;
-  document.getElementById("editEmail").value = email;
-  document.getElementById("editRole").value = role;
-  document.getElementById("editModal").classList.remove("hidden");
-}
-
-function closeEditUser() {
-  document.getElementById("editModal").classList.add("hidden");
-}
-
-function saveEditUser() {
-  alert("Data user berhasil diubah (dummy)");
-  closeEditUser();
-}
-
+<script>
 let currentUserId = null;
 
+// buka modal + isi data
 function openEditUser(id) {
   currentUserId = id;
 
@@ -114,6 +96,12 @@ function openEditUser(id) {
   document.getElementById("editModal").classList.remove("hidden");
 }
 
+// tutup modal
+function closeEditUser() {
+  document.getElementById("editModal").classList.add("hidden");
+}
+
+// simpan perubahan
 function saveEditUser() {
   const nama  = document.getElementById("editNama").value;
   const email = document.getElementById("editEmail").value;
@@ -124,14 +112,25 @@ function saveEditUser() {
   document.getElementById("email-user-" + currentUserId).innerText = email;
   document.getElementById("role-user-" + currentUserId).innerText = role;
 
+  // simpan ke localStorage
+  localStorage.setItem(
+    "user_" + currentUserId,
+    JSON.stringify({ nama, email, role })
+  );
+
   closeEditUser();
 }
 
-    localStorage.setItem(
-  "user_" + currentUserId,
-  JSON.stringify({ nama, email, role })
-);
-
+// load data saat refresh
+window.onload = function () {
+  const data = localStorage.getItem("user_1");
+  if (data) {
+    const user = JSON.parse(data);
+    document.getElementById("nama-user-1").innerText = user.nama;
+    document.getElementById("email-user-1").innerText = user.email;
+    document.getElementById("role-user-1").innerText = user.role;
+  }
+};
 </script>
 
 </body>
