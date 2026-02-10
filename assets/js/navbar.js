@@ -1,11 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
   const role = localStorage.getItem("role") || "siswa";
 
-  // cek apakah sedang di folder /admin
   const isAdminPage = location.pathname.includes("/admin/");
 
-  // helper path
+  // helper path untuk file umum
   const p = (file) => isAdminPage ? `../${file}` : file;
+
+  // dashboard link (beda admin vs user)
+  const dashboardLink = isAdminPage
+    ? "index.html"        // admin/index.html
+    : "index.html";       // root index.html
 
   const navbar = `
 <header class="sticky top-0 z-50 bg-white shadow">
@@ -22,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ${role.toUpperCase()}
       </span>
 
-      <a href="${p("dashboard.html")}" class="hover:text-red-600">Dashboard</a>
+      <a href="${p(dashboardLink)}" class="hover:text-red-600">Dashboard</a>
       <a href="${p("presensi.html")}" class="hover:text-red-600">Presensi</a>
       <a href="${p("materi.html")}" class="hover:text-red-600">Materi</a>
       <a href="${p("jadwal.html")}" class="hover:text-red-600">Jadwal</a>
@@ -32,7 +36,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       ${
         role === "admin"
-          ? `<a href="${p("admin/index.html")}" class="text-red-600 font-semibold">Admin</a>`
+          ? `<a href="${isAdminPage ? "index.html" : "admin/index.html"}"
+               class="text-red-600 font-semibold">Admin</a>`
           : ""
       }
     </nav>
