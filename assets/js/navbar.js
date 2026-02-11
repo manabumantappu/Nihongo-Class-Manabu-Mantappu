@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <a href="${p("kalender.html")}" class="hover:text-red-600">Kalender</a>
       <a href="${p("pengumuman.html")}" class="hover:text-red-600">Pengumuman</a>
       <a href="${p("akun.html")}" class="hover:text-red-600">Akun</a>
+      <a href="../admin/materi.html">Admin</a>
 
       ${
         role === "admin"
