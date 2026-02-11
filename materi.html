@@ -8,65 +8,16 @@
 
 <body class="bg-gray-100">
 
-<!-- 🔐 GUARD PALING ATAS -->
 <script src="assets/js/guard.js"></script>
-
-<!-- 🧭 NAVBAR GLOBAL -->
 <script src="assets/js/navbar.js"></script>
 
 <div class="max-w-7xl mx-auto p-6 mt-6">
   <h1 class="text-xl font-semibold mb-6">Materi Pembelajaran</h1>
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="materiList"></div>
-
-<script src="assets/js/materi.js"></script>
-
-
-  <!-- HIRAGANA -->
-  <div class="bg-white p-4 rounded shadow">
-    <h3 class="font-semibold">Hiragana Dasar</h3>
-    <p class="text-sm text-gray-500">PDF • Video</p>
-
-    <a href="assets/materi/hiragana.pdf"
-       target="_blank"
-       class="mt-3 block text-blue-600 text-sm">
-       📄 Preview PDF
-    </a>
-
-    <a href="assets/materi/hiragana.mp4"
-       target="_blank"
-       class="block text-blue-600 text-sm">
-       🎥 Tonton Video
-    </a>
-  </div>
-
-  <!-- KATAKANA -->
-  <div class="bg-white p-4 rounded shadow">
-    <h3 class="font-semibold">Katakana</h3>
-    <p class="text-sm text-gray-500">PDF</p>
-
-    <a href="assets/materi/katakana.pdf"
-       target="_blank"
-       class="mt-3 block text-blue-600 text-sm">
-       📄 Preview PDF
-    </a>
-  </div>
-
-  <!-- KANJI -->
-  <div class="bg-white p-4 rounded shadow">
-    <h3 class="font-semibold">Kanji N5</h3>
-    <p class="text-sm text-gray-500">PPT</p>
-
-    <a href="assets/materi/kanji-n5.pptx"
-       target="_blank"
-       class="mt-3 block text-blue-600 text-sm">
-       📊 Download PPT
-    </a>
-  </div>
-
+  <div id="materiList" class="space-y-4"></div>
 </div>
 
-<!-- 🔑 AUTH (LOGOUT) -->
+<script src="assets/js/materi.js"></script>
 <script src="assets/js/auth.js"></script>
 
 </body>
