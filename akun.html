@@ -162,33 +162,39 @@ document.addEventListener("DOMContentLoaded", function() {
     alert("Profil berhasil diperbarui");
   });
 
-  // ================= FOTO PROFIL =================
-  const profileImage = document.getElementById("profileImage");
-  const uploadPhoto = document.getElementById("uploadPhoto");
-  const changePhotoBtn = document.getElementById("changePhotoBtn");
+  // ================= FOTO PROFIL PER USER =================
+const profileImage = document.getElementById("profileImage");
+const uploadPhoto = document.getElementById("uploadPhoto");
+const changePhotoBtn = document.getElementById("changePhotoBtn");
 
-  const savedPhoto = localStorage.getItem("profilePhoto");
-  if (savedPhoto) {
-    profileImage.src = savedPhoto;
-  }
+const photoKey = "profilePhoto_" + email;
 
-  changePhotoBtn.addEventListener("click", function() {
-    uploadPhoto.click();
-  });
+// Load foto berdasarkan email
+const savedPhoto = localStorage.getItem(photoKey);
+if (savedPhoto) {
+  profileImage.src = savedPhoto;
+} else {
+  profileImage.src = "https://via.placeholder.com/100";
+}
 
-  uploadPhoto.addEventListener("change", function() {
+changePhotoBtn.addEventListener("click", function() {
+  uploadPhoto.click();
+});
 
-    const file = uploadPhoto.files[0];
-    if (!file) return;
+uploadPhoto.addEventListener("change", function() {
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      profileImage.src = e.target.result;
-      localStorage.setItem("profilePhoto", e.target.result);
-    };
+  const file = uploadPhoto.files[0];
+  if (!file) return;
 
-    reader.readAsDataURL(file);
-  });
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    profileImage.src = e.target.result;
+    localStorage.setItem(photoKey, e.target.result);
+  };
+
+  reader.readAsDataURL(file);
+});
+
 
 });
 </script>
