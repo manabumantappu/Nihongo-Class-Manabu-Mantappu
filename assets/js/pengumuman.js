@@ -17,14 +17,24 @@ document.addEventListener("DOMContentLoaded", function () {
     return new Date().toLocaleDateString("id-ID");
   }
 
+  // ================= ADMIN VIEW =================
   function renderAdmin() {
     if (!adminList) return;
 
     adminList.innerHTML = "";
 
+    if (data.length === 0) {
+      adminList.innerHTML = `
+        <div class="bg-white p-4 rounded shadow text-center text-gray-500">
+          Belum ada pengumuman
+        </div>
+      `;
+      return;
+    }
+
     data.forEach((item, index) => {
       adminList.innerHTML += `
-        <div class="bg-white p-4 rounded shadow mb-2">
+        <div class="bg-white p-4 rounded shadow">
           <span class="text-xs px-2 py-1 rounded ${
             item.kategori === "Penting"
               ? "bg-red-100 text-red-600"
@@ -34,15 +44,19 @@ document.addEventListener("DOMContentLoaded", function () {
           <h3 class="font-semibold mt-2">${item.judul}</h3>
           <p class="text-sm text-gray-500">${item.tanggal}</p>
 
-          <button onclick="editPengumuman(${index})"
-            class="text-blue-600 text-sm mt-2">Edit</button>
-          <button onclick="hapusPengumuman(${index})"
-            class="text-red-600 text-sm ml-2">Hapus</button>
+          <div class="mt-2">
+            <button onclick="editPengumuman(${index})"
+              class="text-blue-600 text-sm">Edit</button>
+
+            <button onclick="hapusPengumuman(${index})"
+              class="text-red-600 text-sm ml-3">Hapus</button>
+          </div>
         </div>
       `;
     });
   }
 
+  // ================= SISWA VIEW =================
   function renderSiswa() {
     if (!list) return;
 
@@ -57,7 +71,10 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    data.forEach(item => {
+    // tampil terbaru di atas
+    const sorted = [...data].reverse();
+
+    sorted.forEach(item => {
       list.innerHTML += `
         <div class="bg-white p-4 rounded shadow">
           <span class="text-xs px-2 py-1 rounded ${
@@ -73,6 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  // ================= TAMBAH =================
   if (simpan) {
     simpan.addEventListener("click", function () {
 
@@ -95,6 +113,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  // ================= HAPUS =================
   window.hapusPengumuman = function (index) {
     if (confirm("Yakin hapus pengumuman?")) {
       data.splice(index, 1);
@@ -104,8 +123,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   };
 
+  // ================= EDIT =================
   window.editPengumuman = function (index) {
     const item = data[index];
+
     judul.value = item.judul;
     kategori.value = item.kategori;
 
