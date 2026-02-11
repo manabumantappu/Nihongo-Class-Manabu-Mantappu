@@ -1,19 +1,38 @@
-<div class="max-w-5xl mx-auto p-6">
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Kelola Pengumuman</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+<script src="../assets/js/guard.js"></script>
+<script src="../assets/js/navbar.js"></script>
+
+<div class="max-w-5xl mx-auto p-6 mt-6">
   <h1 class="text-xl font-semibold mb-4">Kelola Pengumuman</h1>
 
-  <div class="bg-white p-4 rounded shadow mb-6 space-y-2">
-    <input id="judul" class="border p-2 w-full" placeholder="Judul">
+  <div class="bg-white p-4 rounded shadow mb-6 space-y-3">
+    <input id="judul" class="border p-2 w-full" placeholder="Judul Pengumuman">
+
     <select id="kategori" class="border p-2 w-full">
       <option value="Penting">Penting</option>
       <option value="Info">Info</option>
     </select>
+
     <button id="simpanPengumuman"
       class="bg-blue-600 text-white px-4 py-2 rounded">
       Simpan
     </button>
   </div>
 
-  <div id="adminList"></div>
+  <div id="adminList" class="space-y-4"></div>
 </div>
 
 <script src="../assets/js/pengumuman.js"></script>
+<script src="../assets/js/auth.js"></script>
+
+</body>
+</html>
