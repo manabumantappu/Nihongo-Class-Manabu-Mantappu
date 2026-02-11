@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // Proteksi admin page
+  // Proteksi halaman admin
   if (isAdminPage && role !== "admin") {
     alert("Akses ditolak.");
     window.location.href = "../dashboard.html";
