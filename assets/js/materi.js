@@ -6,9 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const jenis = document.getElementById("jenis");
   const link = document.getElementById("link");
   const simpan = document.getElementById("simpanMateri");
-
   const table = document.getElementById("materiTable");
-  const list = document.getElementById("materiList");
 
   function save() {
     localStorage.setItem("materiData", JSON.stringify(materiData));
@@ -29,25 +27,6 @@ document.addEventListener("DOMContentLoaded", function () {
             <button onclick="hapusMateri(${index})" class="text-red-600 ml-2">Hapus</button>
           </td>
         </tr>
-      `;
-    });
-  }
-
-  function renderSiswa() {
-    if (!list) return;
-
-    list.innerHTML = "";
-
-    materiData.forEach(m => {
-      list.innerHTML += `
-        <div class="bg-white p-4 rounded shadow">
-          <h3 class="font-semibold">${m.judul}</h3>
-          <p class="text-sm text-gray-500">${m.jenis}</p>
-          <a href="${m.link}" target="_blank"
-             class="mt-3 block text-blue-600 text-sm">
-             Buka Materi
-          </a>
-        </div>
       `;
     });
   }
@@ -73,6 +52,8 @@ document.addEventListener("DOMContentLoaded", function () {
       judul.value = "";
       jenis.value = "";
       link.value = "";
+
+      alert("Materi berhasil ditambahkan");
     });
   }
 
@@ -81,7 +62,6 @@ document.addEventListener("DOMContentLoaded", function () {
       materiData.splice(index, 1);
       save();
       renderAdmin();
-      renderSiswa();
     }
   }
 
@@ -98,6 +78,5 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   renderAdmin();
-  renderSiswa();
 
 });
