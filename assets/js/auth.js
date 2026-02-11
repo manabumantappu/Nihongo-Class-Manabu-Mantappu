@@ -14,10 +14,15 @@ function login() {
   localStorage.setItem("role", role);
   localStorage.setItem("email", email);
 
-  // Redirect sesuai role
   if (role === "admin") {
     location.href = "admin/index.html";
   } else {
     location.href = "dashboard.html";
   }
 }
+
+// 🔥 INI YANG PENTING
+window.logout = function() {
+  localStorage.clear();
+  location.href = "index.html";
+};
