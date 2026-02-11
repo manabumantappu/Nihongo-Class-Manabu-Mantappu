@@ -30,6 +30,7 @@
 
   <div id="adminList" class="space-y-4"></div>
 </div>
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
@@ -52,49 +53,41 @@ const pengumumanRef = ref(database, "pengumuman");
 const judul = document.getElementById("judul");
 const kategori = document.getElementById("kategori");
 const simpan = document.getElementById("simpanPengumuman");
-
 const adminList = document.getElementById("adminList");
-const list = document.getElementById("pengumumanList");
 
 function today() {
   return new Date().toLocaleDateString("id-ID");
 }
 
-// ================= TAMBAH =================
-if (simpan) {
-  simpan.addEventListener("click", () => {
+// TAMBAH
+simpan.addEventListener("click", () => {
 
-    if (!judul.value) {
-      alert("Judul wajib diisi");
-      return;
-    }
+  if (!judul.value) {
+    alert("Judul wajib diisi");
+    return;
+  }
 
-    push(pengumumanRef, {
-      judul: judul.value,
-      kategori: kategori.value,
-      tanggal: today()
-    });
-
-    judul.value = "";
+  push(pengumumanRef, {
+    judul: judul.value,
+    kategori: kategori.value,
+    tanggal: today()
   });
-}
 
-// ================= REALTIME LISTENER =================
+  judul.value = "";
+});
+
+// REALTIME LISTENER
 onValue(pengumumanRef, (snapshot) => {
 
   const data = snapshot.val();
-
-  if (adminList) adminList.innerHTML = "";
-  if (list) list.innerHTML = "";
+  adminList.innerHTML = "";
 
   if (!data) {
-    if (list) {
-      list.innerHTML = `
-        <div class="bg-white p-4 rounded shadow text-center text-gray-500">
-          Belum ada pengumuman
-        </div>
-      `;
-    }
+    adminList.innerHTML = `
+      <div class="bg-white p-4 rounded shadow text-center text-gray-500">
+        Belum ada pengumuman
+      </div>
+    `;
     return;
   }
 
@@ -102,7 +95,7 @@ onValue(pengumumanRef, (snapshot) => {
 
   items.forEach(([key, item]) => {
 
-    const card = `
+    adminList.innerHTML += `
       <div class="bg-white p-4 rounded shadow">
         <span class="text-xs px-2 py-1 rounded ${
           item.kategori === "Penting"
@@ -112,39 +105,21 @@ onValue(pengumumanRef, (snapshot) => {
 
         <h3 class="font-semibold mt-2">${item.judul}</h3>
         <p class="text-sm text-gray-500">${item.tanggal}</p>
+
+        <button onclick="hapusPengumuman('${key}')"
+          class="text-red-600 text-sm mt-2">Hapus</button>
       </div>
     `;
-
-    if (list) list.innerHTML += card;
-
-    if (adminList) {
-      adminList.innerHTML += `
-        <div class="bg-white p-4 rounded shadow">
-          <span class="text-xs px-2 py-1 rounded ${
-            item.kategori === "Penting"
-              ? "bg-red-100 text-red-600"
-              : "bg-blue-100 text-blue-600"
-          }">${item.kategori}</span>
-
-          <h3 class="font-semibold mt-2">${item.judul}</h3>
-          <p class="text-sm text-gray-500">${item.tanggal}</p>
-
-          <button onclick="hapusPengumuman('${key}')"
-            class="text-red-600 text-sm mt-2">Hapus</button>
-        </div>
-      `;
-    }
   });
+
 });
 
-// ================= HAPUS =================
 window.hapusPengumuman = function(key) {
   remove(ref(database, "pengumuman/" + key));
 };
 
 </script>
 
-<script src="../assets/js/pengumuman.js"></script>
 <script src="../assets/js/auth.js"></script>
 
 </body>
