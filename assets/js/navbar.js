@@ -1,17 +1,10 @@
-Navbar.js
-
 document.addEventListener("DOMContentLoaded", () => {
-  const role = localStorage.getItem("role") || "siswa";
 
+  const role = localStorage.getItem("role") || "siswa";
   const isAdminPage = location.pathname.includes("/admin/");
 
-  // helper path untuk file umum
+  // helper path otomatis
   const p = (file) => isAdminPage ? `../${file}` : file;
-
-  // dashboard link (beda admin vs user)
-  const dashboardLink = isAdminPage
-    ? "index.html"        // admin/index.html
-    : "index.html";       // root index.html
 
   const navbar = `
 <header class="sticky top-0 z-50 bg-white shadow">
@@ -24,25 +17,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
     <!-- MENU -->
     <nav class="hidden md:flex gap-6 text-sm font-medium items-center">
+
       <span class="px-2 py-1 text-xs rounded bg-gray-100 text-gray-600">
         ${role.toUpperCase()}
       </span>
 
-      <a href="${p(dashboardLink)}" class="hover:text-red-600">Dashboard</a>
+      <a href="${p("index.html")}" class="hover:text-red-600">Dashboard</a>
       <a href="${p("presensi.html")}" class="hover:text-red-600">Presensi</a>
       <a href="${p("materi.html")}" class="hover:text-red-600">Materi</a>
       <a href="${p("jadwal.html")}" class="hover:text-red-600">Jadwal</a>
       <a href="${p("kalender.html")}" class="hover:text-red-600">Kalender</a>
       <a href="${p("pengumuman.html")}" class="hover:text-red-600">Pengumuman</a>
       <a href="${p("akun.html")}" class="hover:text-red-600">Akun</a>
-      <a href="../admin/materi.html">Admin</a>
 
       ${
         role === "admin"
-          ? `<a href="${isAdminPage ? "index.html" : "admin/index.html"}"
+          ? `<a href="${p("admin/index.html")}"
                class="text-red-600 font-semibold">Admin</a>`
           : ""
       }
+
     </nav>
 
     <!-- LOGOUT -->
@@ -56,4 +50,5 @@ document.addEventListener("DOMContentLoaded", () => {
 `;
 
   document.body.insertAdjacentHTML("afterbegin", navbar);
+
 });
