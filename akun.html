@@ -18,6 +18,11 @@
 
     <!-- INFO UMUM -->
     <div>
+      <p class="text-sm text-gray-500">Nama</p>
+      <p id="namaDisplay" class="font-medium"></p>
+    </div>
+
+    <div>
       <p class="text-sm text-gray-500">Email</p>
       <p id="emailDisplay" class="font-medium"></p>
     </div>
@@ -48,20 +53,6 @@
           <p class="text-sm text-gray-500">Total Presensi</p>
           <p id="totalPresensi" class="text-xl font-semibold">0</p>
         </div>
-<div>
-  <p class="text-sm text-gray-500">Nama</p>
-  <p id="namaDisplay" class="font-medium"></p>
-</div>
-
-<div>
-  <p class="text-sm text-gray-500">Email</p>
-  <p id="emailDisplay" class="font-medium"></p>
-</div>
-
-<div>
-  <p class="text-sm text-gray-500">Role</p>
-  <p id="roleDisplay" class="font-medium capitalize"></p>
-</div>
 
       </div>
     </div>
@@ -82,22 +73,33 @@
   </div>
 </div>
 
+<!-- MODAL EDIT -->
+<div id="editModal" class="fixed inset-0 bg-black bg-opacity-40 hidden flex items-center justify-center">
+  <div class="bg-white p-6 rounded shadow w-96 space-y-4">
+    <h2 class="text-lg font-semibold">Edit Profil</h2>
+
+    <input id="editNama" class="border p-2 w-full" placeholder="Nama">
+    <input id="editEmail" class="border p-2 w-full" placeholder="Email">
+
+    <div class="flex justify-end gap-2">
+      <button id="cancelEdit" class="px-4 py-2 bg-gray-300 rounded">Batal</button>
+      <button id="saveEdit" class="px-4 py-2 bg-blue-600 text-white rounded">Simpan</button>
+    </div>
+  </div>
+</div>
+
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-
-  const emailDisplay = document.getElementById("emailDisplay");
-  const roleDisplay = document.getElementById("roleDisplay");
-  const namaDisplay = document.getElementById("namaDisplay");
 
   const role = localStorage.getItem("role") || "siswa";
   let email = localStorage.getItem("email") || "-";
   let nama = localStorage.getItem("nama") || "User";
 
-  emailDisplay.textContent = email;
-  roleDisplay.textContent = role;
-  namaDisplay.textContent = nama;
+  document.getElementById("emailDisplay").textContent = email;
+  document.getElementById("roleDisplay").textContent = role;
+  document.getElementById("namaDisplay").textContent = nama;
 
-  // ================= ADMIN STAT =================
+  // ADMIN STAT
   if (role === "admin") {
     document.getElementById("adminSection").classList.remove("hidden");
 
@@ -110,7 +112,6 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("totalPresensi").textContent = presensi.length;
   }
 
-  // ================= EDIT PROFIL =================
   const modal = document.getElementById("editModal");
   const editNama = document.getElementById("editNama");
   const editEmail = document.getElementById("editEmail");
@@ -138,34 +139,17 @@ document.addEventListener("DOMContentLoaded", function() {
     localStorage.setItem("nama", nama);
     localStorage.setItem("email", email);
 
-    namaDisplay.textContent = nama;
-    emailDisplay.textContent = email;
+    document.getElementById("namaDisplay").textContent = nama;
+    document.getElementById("emailDisplay").textContent = email;
 
     modal.classList.add("hidden");
-
     alert("Profil berhasil diperbarui");
   });
 
 });
 </script>
 
-
 <script src="assets/js/auth.js"></script>
-
-  <!-- MODAL EDIT -->
-<div id="editModal" class="fixed inset-0 bg-black bg-opacity-40 hidden flex items-center justify-center">
-  <div class="bg-white p-6 rounded shadow w-96 space-y-4">
-    <h2 class="text-lg font-semibold">Edit Profil</h2>
-
-    <input id="editNama" class="border p-2 w-full" placeholder="Nama">
-    <input id="editEmail" class="border p-2 w-full" placeholder="Email">
-
-    <div class="flex justify-end gap-2">
-      <button id="cancelEdit" class="px-4 py-2 bg-gray-300 rounded">Batal</button>
-      <button id="saveEdit" class="px-4 py-2 bg-blue-600 text-white rounded">Simpan</button>
-    </div>
-  </div>
-</div>
 
 </body>
 </html>
