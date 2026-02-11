@@ -13,9 +13,9 @@
 
 <div class="max-w-4xl mx-auto p-6 mt-6">
   <h1 class="text-xl font-semibold mb-6">Pengumuman</h1>
-
   <div id="pengumumanList" class="space-y-4"></div>
 </div>
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
@@ -34,7 +34,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const pengumumanRef = ref(database, "pengumuman");
-
 const list = document.getElementById("pengumumanList");
 
 onValue(pengumumanRef, (snapshot) => {
