@@ -16,6 +16,119 @@
 
   <div id="pengumumanList" class="space-y-4"></div>
 </div>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDWe_8KQh5J5gzgKYDWnzNKiw-y1Vj3908",
+  authDomain: "jp-nihongo-class.firebaseapp.com",
+  databaseURL: "https://jp-nihongo-class-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "jp-nihongo-class",
+  storageBucket: "jp-nihongo-class.firebasestorage.app",
+  messagingSenderId: "102563702284",
+  appId: "1:102563702284:web:9a5166a4f7450127647029"
+};
+
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+const pengumumanRef = ref(database, "pengumuman");
+
+const judul = document.getElementById("judul");
+const kategori = document.getElementById("kategori");
+const simpan = document.getElementById("simpanPengumuman");
+
+const adminList = document.getElementById("adminList");
+const list = document.getElementById("pengumumanList");
+
+function today() {
+  return new Date().toLocaleDateString("id-ID");
+}
+
+// ================= TAMBAH =================
+if (simpan) {
+  simpan.addEventListener("click", () => {
+
+    if (!judul.value) {
+      alert("Judul wajib diisi");
+      return;
+    }
+
+    push(pengumumanRef, {
+      judul: judul.value,
+      kategori: kategori.value,
+      tanggal: today()
+    });
+
+    judul.value = "";
+  });
+}
+
+// ================= REALTIME LISTENER =================
+onValue(pengumumanRef, (snapshot) => {
+
+  const data = snapshot.val();
+
+  if (adminList) adminList.innerHTML = "";
+  if (list) list.innerHTML = "";
+
+  if (!data) {
+    if (list) {
+      list.innerHTML = `
+        <div class="bg-white p-4 rounded shadow text-center text-gray-500">
+          Belum ada pengumuman
+        </div>
+      `;
+    }
+    return;
+  }
+
+  const items = Object.entries(data).reverse();
+
+  items.forEach(([key, item]) => {
+
+    const card = `
+      <div class="bg-white p-4 rounded shadow">
+        <span class="text-xs px-2 py-1 rounded ${
+          item.kategori === "Penting"
+            ? "bg-red-100 text-red-600"
+            : "bg-blue-100 text-blue-600"
+        }">${item.kategori}</span>
+
+        <h3 class="font-semibold mt-2">${item.judul}</h3>
+        <p class="text-sm text-gray-500">${item.tanggal}</p>
+      </div>
+    `;
+
+    if (list) list.innerHTML += card;
+
+    if (adminList) {
+      adminList.innerHTML += `
+        <div class="bg-white p-4 rounded shadow">
+          <span class="text-xs px-2 py-1 rounded ${
+            item.kategori === "Penting"
+              ? "bg-red-100 text-red-600"
+              : "bg-blue-100 text-blue-600"
+          }">${item.kategori}</span>
+
+          <h3 class="font-semibold mt-2">${item.judul}</h3>
+          <p class="text-sm text-gray-500">${item.tanggal}</p>
+
+          <button onclick="hapusPengumuman('${key}')"
+            class="text-red-600 text-sm mt-2">Hapus</button>
+        </div>
+      `;
+    }
+  });
+});
+
+// ================= HAPUS =================
+window.hapusPengumuman = function(key) {
+  remove(ref(database, "pengumuman/" + key));
+};
+
+</script>
 
 <script src="assets/js/pengumuman.js"></script>
 <script src="assets/js/auth.js"></script>
