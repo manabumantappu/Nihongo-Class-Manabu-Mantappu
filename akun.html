@@ -85,16 +85,22 @@
 <script>
 document.addEventListener("DOMContentLoaded", function() {
 
-  const email = localStorage.getItem("email") || "-";
+  const emailDisplay = document.getElementById("emailDisplay");
+  const roleDisplay = document.getElementById("roleDisplay");
+  const namaDisplay = document.getElementById("namaDisplay");
+
   const role = localStorage.getItem("role") || "siswa";
+  let email = localStorage.getItem("email") || "-";
+  let nama = localStorage.getItem("nama") || "User";
 
-  document.getElementById("emailDisplay").textContent = email;
-  document.getElementById("roleDisplay").textContent = role;
+  emailDisplay.textContent = email;
+  roleDisplay.textContent = role;
+  namaDisplay.textContent = nama;
 
+  // ================= ADMIN STAT =================
   if (role === "admin") {
     document.getElementById("adminSection").classList.remove("hidden");
 
-    // Hitung statistik
     const users = JSON.parse(localStorage.getItem("userData")) || [];
     const materi = JSON.parse(localStorage.getItem("materiData")) || [];
     const presensi = JSON.parse(localStorage.getItem("presensiData")) || [];
@@ -104,12 +110,45 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("totalPresensi").textContent = presensi.length;
   }
 
+  // ================= EDIT PROFIL =================
+  const modal = document.getElementById("editModal");
+  const editNama = document.getElementById("editNama");
+  const editEmail = document.getElementById("editEmail");
+
   document.getElementById("editProfileBtn").addEventListener("click", function() {
-    alert("Fitur edit profil akan dikembangkan selanjutnya.");
+    editNama.value = nama;
+    editEmail.value = email;
+    modal.classList.remove("hidden");
+  });
+
+  document.getElementById("cancelEdit").addEventListener("click", function() {
+    modal.classList.add("hidden");
+  });
+
+  document.getElementById("saveEdit").addEventListener("click", function() {
+
+    if (!editNama.value || !editEmail.value) {
+      alert("Semua field wajib diisi");
+      return;
+    }
+
+    nama = editNama.value;
+    email = editEmail.value;
+
+    localStorage.setItem("nama", nama);
+    localStorage.setItem("email", email);
+
+    namaDisplay.textContent = nama;
+    emailDisplay.textContent = email;
+
+    modal.classList.add("hidden");
+
+    alert("Profil berhasil diperbarui");
   });
 
 });
 </script>
+
 
 <script src="assets/js/auth.js"></script>
 
