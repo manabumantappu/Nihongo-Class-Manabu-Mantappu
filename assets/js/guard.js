@@ -1,23 +1,22 @@
-// ===== GUARD FINAL (SINGLE, CLEAN) =====
-const isLogin = localStorage.getItem("login");
-const role = localStorage.getItem("role");
+document.addEventListener("DOMContentLoaded", function () {
 
-// apakah halaman admin
-const isAdminPage = location.pathname.includes("/admin/");
+  const isLogin = localStorage.getItem("login");
+  const role = localStorage.getItem("role");
+  const isAdminPage = location.pathname.includes("/admin/");
 
-// redirect RELATIF (AMAN UNTUK GITHUB PAGES PROJECT)
-function goLogin() {
-  location.href = isAdminPage ? "../index.html" : "index.html";
-}
+  function goLogin() {
+    location.href = isAdminPage ? "../index.html" : "index.html";
+  }
 
-// belum login → ke login
-if (!isLogin) {
-  goLogin();
-  return; // ⛔ STOP eksekusi lanjut
-}
+  // Belum login
+  if (!isLogin) {
+    goLogin();
+  }
 
-// proteksi admin
-if (isAdminPage && role !== "admin") {
-  alert("Akses ditolak. Khusus admin.");
-  location.href = "../dashboard.html";
-}
+  // Proteksi admin
+  if (isAdminPage && role !== "admin") {
+    alert("Akses ditolak. Khusus admin.");
+    location.href = "../dashboard.html";
+  }
+
+});
