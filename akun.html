@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("roleDisplay").textContent = role;
   document.getElementById("namaDisplay").textContent = nama;
 
-  // ADMIN STAT
+  // ================= ADMIN STAT =================
   if (role === "admin") {
     document.getElementById("adminSection").classList.remove("hidden");
 
@@ -127,6 +127,7 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("totalPresensi").textContent = presensi.length;
   }
 
+  // ================= EDIT PROFIL =================
   const modal = document.getElementById("editModal");
   const editNama = document.getElementById("editNama");
   const editEmail = document.getElementById("editEmail");
@@ -161,37 +162,37 @@ document.addEventListener("DOMContentLoaded", function() {
     alert("Profil berhasil diperbarui");
   });
 
-});
   // ================= FOTO PROFIL =================
-const profileImage = document.getElementById("profileImage");
-const uploadPhoto = document.getElementById("uploadPhoto");
-const changePhotoBtn = document.getElementById("changePhotoBtn");
+  const profileImage = document.getElementById("profileImage");
+  const uploadPhoto = document.getElementById("uploadPhoto");
+  const changePhotoBtn = document.getElementById("changePhotoBtn");
 
-// Load foto jika ada
-const savedPhoto = localStorage.getItem("profilePhoto");
-if (savedPhoto) {
-  profileImage.src = savedPhoto;
-}
+  const savedPhoto = localStorage.getItem("profilePhoto");
+  if (savedPhoto) {
+    profileImage.src = savedPhoto;
+  }
 
-changePhotoBtn.addEventListener("click", function() {
-  uploadPhoto.click();
+  changePhotoBtn.addEventListener("click", function() {
+    uploadPhoto.click();
+  });
+
+  uploadPhoto.addEventListener("change", function() {
+
+    const file = uploadPhoto.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      profileImage.src = e.target.result;
+      localStorage.setItem("profilePhoto", e.target.result);
+    };
+
+    reader.readAsDataURL(file);
+  });
+
 });
-
-uploadPhoto.addEventListener("change", function() {
-
-  const file = uploadPhoto.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    profileImage.src = e.target.result;
-    localStorage.setItem("profilePhoto", e.target.result);
-  };
-
-  reader.readAsDataURL(file);
-});
-
 </script>
+
 
 <script src="assets/js/auth.js"></script>
 
