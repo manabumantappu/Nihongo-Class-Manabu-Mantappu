@@ -1,22 +1,19 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
 
   const isLogin = localStorage.getItem("login");
   const role = localStorage.getItem("role");
+
   const isAdminPage = location.pathname.includes("/admin/");
 
-  function goLogin() {
-    location.href = isAdminPage ? "../index.html" : "index.html";
-  }
-
-  // Belum login
   if (!isLogin) {
-    goLogin();
+    window.location.href = isAdminPage ? "../index.html" : "index.html";
+    return;
   }
 
-  // Proteksi admin
+  // Proteksi admin page
   if (isAdminPage && role !== "admin") {
-    alert("Akses ditolak. Khusus admin.");
-    location.href = "../dashboard.html";
+    alert("Akses ditolak.");
+    window.location.href = "../dashboard.html";
   }
 
 });
