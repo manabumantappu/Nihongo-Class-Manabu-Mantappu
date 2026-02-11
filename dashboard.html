@@ -66,6 +66,59 @@
 
 <!-- AUTH -->
 <script src="assets/js/auth.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDWe_8KQh5J5gzgKYDWnzNKiw-y1Vj3908",
+  authDomain: "jp-nihongo-class.firebaseapp.com",
+  databaseURL: "https://jp-nihongo-class-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "jp-nihongo-class",
+  storageBucket: "jp-nihongo-class.firebasestorage.app",
+  messagingSenderId: "102563702284",
+  appId: "1:102563702284:web:9a5166a4f7450127647029"
+};
+
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+const pengumumanRef = ref(database, "pengumuman");
+
+const list = document.getElementById("pengumumanTerbaru");
+
+onValue(pengumumanRef, (snapshot) => {
+
+  const data = snapshot.val();
+  list.innerHTML = "";
+
+  if (!data) {
+    list.innerHTML = `
+      <div class="bg-white p-4 rounded shadow text-center text-gray-500">
+        Belum ada pengumuman
+      </div>
+    `;
+    return;
+  }
+
+  const items = Object.values(data).reverse();
+
+  items.slice(0, 3).forEach(item => {
+    list.innerHTML += `
+      <div class="bg-white p-4 rounded shadow">
+        <span class="text-xs px-2 py-1 rounded ${
+          item.kategori === "Penting"
+            ? "bg-red-100 text-red-600"
+            : "bg-blue-100 text-blue-600"
+        }">${item.kategori}</span>
+
+        <h3 class="font-semibold mt-2">${item.judul}</h3>
+        <p class="text-sm text-gray-500">${item.tanggal}</p>
+      </div>
+    `;
+  });
+
+});
+</script>
 
 </body>
 </html>
