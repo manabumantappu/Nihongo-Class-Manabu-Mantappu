@@ -14,11 +14,10 @@ function login() {
   localStorage.setItem("role", role);
   localStorage.setItem("email", email);
 
-  // RELATIF
-  location.href = "dashboard.html";
-}
-
-function logout() {
-  localStorage.clear();
-  location.href = "index.html";
+  // Redirect sesuai role
+  if (role === "admin") {
+    location.href = "admin/index.html";
+  } else {
+    location.href = "dashboard.html";
+  }
 }
