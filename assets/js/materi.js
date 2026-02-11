@@ -6,12 +6,15 @@ document.addEventListener("DOMContentLoaded", function () {
   const jenis = document.getElementById("jenis");
   const link = document.getElementById("link");
   const simpan = document.getElementById("simpanMateri");
+
   const table = document.getElementById("materiTable");
+  const list = document.getElementById("materiList");
 
   function save() {
     localStorage.setItem("materiData", JSON.stringify(materiData));
   }
 
+  // ================= ADMIN RENDER =================
   function renderAdmin() {
     if (!table) return;
 
@@ -31,6 +34,37 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  // ================= SISWA RENDER =================
+  function renderSiswa() {
+    if (!list) return;
+
+    list.innerHTML = "";
+
+    if (materiData.length === 0) {
+      list.innerHTML = `
+        <div class="bg-white p-4 rounded shadow text-center text-gray-500">
+          Belum ada materi
+        </div>
+      `;
+      return;
+    }
+
+    materiData.forEach(m => {
+      list.innerHTML += `
+        <div class="bg-white p-4 rounded shadow">
+          <h3 class="font-semibold">${m.judul}</h3>
+          <p class="text-sm text-gray-500">${m.jenis}</p>
+
+          <a href="${m.link}" target="_blank"
+             class="mt-3 block text-blue-600 text-sm">
+             Buka Materi
+          </a>
+        </div>
+      `;
+    });
+  }
+
+  // ================= TAMBAH =================
   if (simpan) {
     simpan.addEventListener("click", function () {
 
@@ -48,6 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       save();
       renderAdmin();
+      renderSiswa();
 
       judul.value = "";
       jenis.value = "";
@@ -57,14 +92,17 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  // ================= HAPUS =================
   window.hapusMateri = function (index) {
     if (confirm("Yakin hapus materi?")) {
       materiData.splice(index, 1);
       save();
       renderAdmin();
+      renderSiswa();
     }
   }
 
+  // ================= EDIT =================
   window.editMateri = function (index) {
     const m = materiData[index];
 
@@ -75,8 +113,10 @@ document.addEventListener("DOMContentLoaded", function () {
     materiData.splice(index, 1);
     save();
     renderAdmin();
+    renderSiswa();
   }
 
   renderAdmin();
+  renderSiswa();
 
 });
