@@ -77,10 +77,12 @@ import {
   getFirestore, 
   collection, 
   getDocs,
+  addDoc,
   deleteDoc,
   doc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+// ================= FIREBASE CONFIG =================
 const firebaseConfig = {
   apiKey: "AIzaSyDWe_8KQh5J5gzgKYDWnzNKiw-y1Vj3908",
   authDomain: "jp-nihongo-class.firebaseapp.com",
@@ -90,11 +92,19 @@ const firebaseConfig = {
   appId: "1:102563702284:web:9a5166a4f7450127647029"
 };
 
+// ================= INIT =================
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const jadwalRef = collection(db, "Jadwal");
 
 const role = localStorage.getItem("role");
+
+// ================= TAMPILKAN FORM ADMIN =================
+if (role === "admin") {
+  document.getElementById("formContainer").classList.remove("hidden");
+} else {
+  document.getElementById("aksiHeader").style.display = "none";
+}
 
 // ================= LOAD DATA =================
 async function loadJadwal() {
@@ -125,42 +135,10 @@ async function loadJadwal() {
       </tr>
     `;
   });
-
-  // sembunyikan header aksi kalau bukan admin
-  if (role !== "admin") {
-    const header = document.getElementById("aksiHeader");
-    if (header) header.style.display = "none";
-  }
-}
-
-window.hapusJadwal = async function(id) {
-  if (confirm("Yakin ingin menghapus jadwal ini?")) {
-    await deleteDoc(doc(db, "Jadwal", id));
-    loadJadwal();
-  }
-};
-
-loadJadwal();
-
-  import { 
-  getFirestore, 
-  collection, 
-  getDocs,
-  addDoc,
-  deleteDoc,
-  doc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-  const role = localStorage.getItem("role");
-
-// tampilkan form hanya admin
-if (role === "admin") {
-  document.getElementById("formContainer").classList.remove("hidden");
 }
 
 // ================= TAMBAH JADWAL =================
 window.tambahJadwal = async function() {
-
   const hari = document.getElementById("hariInput").value;
   const jam = document.getElementById("jamInput").value;
   const level = document.getElementById("levelInput").value;
@@ -171,12 +149,7 @@ window.tambahJadwal = async function() {
     return;
   }
 
-  await addDoc(jadwalRef, {
-    hari,
-    jam,
-    level,
-    pengajar
-  });
+  await addDoc(jadwalRef, { hari, jam, level, pengajar });
 
   // reset form
   document.getElementById("hariInput").value = "";
@@ -187,7 +160,17 @@ window.tambahJadwal = async function() {
   loadJadwal();
 };
 
+// ================= HAPUS =================
+window.hapusJadwal = async function(id) {
+  if (confirm("Yakin ingin menghapus jadwal ini?")) {
+    await deleteDoc(doc(db, "Jadwal", id));
+    loadJadwal();
+  }
+};
+
+loadJadwal();
 </script>
+
 
 
 
