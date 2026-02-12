@@ -97,6 +97,16 @@ const db = getFirestore(app);
 const jadwalRef = collection(db, "Jadwal");
 
 const role = localStorage.getItem("role");
+// ================= URUTAN HARI =================
+const urutanHari = {
+  "Senin": 1,
+  "Selasa": 2,
+  "Rabu": 3,
+  "Kamis": 4,
+  "Jumat": 5,
+  "Sabtu": 6,
+  "Minggu": 7
+};
 
 // ================= TAMPILKAN FORM ADMIN =================
 if (role === "admin") {
@@ -111,10 +121,23 @@ async function loadJadwal() {
   const tbody = document.getElementById("jadwalBody");
   tbody.innerHTML = "";
 
+  let dataList = [];
+
   snapshot.forEach((item) => {
     const data = item.data();
-    const id = item.id;
+    dataList.push({
+      id: item.id,
+      ...data
+    });
+  });
 
+  // 🔥 SORT berdasarkan hari
+  dataList.sort((a, b) => {
+    return (urutanHari[a.hari] || 99) - (urutanHari[b.hari] || 99);
+  });
+
+  // Render setelah diurutkan
+  dataList.forEach((data) => {
     tbody.innerHTML += `
       <tr class="hover:bg-gray-50">
         <td class="p-3">${data.hari}</td>
@@ -124,7 +147,7 @@ async function loadJadwal() {
         ${
           role === "admin"
           ? `<td class="p-3 text-center">
-              <button onclick="hapusJadwal('${id}')" 
+              <button onclick="hapusJadwal('${data.id}')" 
                 class="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600">
                 Hapus
               </button>
@@ -135,6 +158,7 @@ async function loadJadwal() {
     `;
   });
 }
+
 
 // ================= TAMBAH JADWAL =================
 window.tambahJadwal = async function() {
