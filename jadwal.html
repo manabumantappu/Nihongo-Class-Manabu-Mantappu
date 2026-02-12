@@ -16,6 +16,39 @@
 
 <div class="max-w-6xl mx-auto p-6 mt-6">
   <h1 class="text-xl font-semibold mb-6">Jadwal Kelas</h1>
+<!-- FORM TAMBAH JADWAL (ADMIN ONLY) -->
+<div id="formContainer" class="bg-white p-4 rounded-xl shadow mb-6 hidden">
+  <h2 class="font-semibold mb-4">Tambah Jadwal</h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+    <select id="hariInput" class="border p-2 rounded">
+      <option value="">Pilih Hari</option>
+      <option>Senin</option>
+      <option>Selasa</option>
+      <option>Rabu</option>
+      <option>Kamis</option>
+      <option>Jumat</option>
+      <option>Sabtu</option>
+      <option>Minggu</option>
+    </select>
+
+    <input id="jamInput" type="text" placeholder="09:00 - 11:00"
+      class="border p-2 rounded">
+
+    <input id="levelInput" type="text" placeholder="N5 / N4 / N3"
+      class="border p-2 rounded">
+
+    <input id="pengajarInput" type="text" placeholder="Nama Sensei"
+      class="border p-2 rounded">
+
+  </div>
+
+  <button onclick="tambahJadwal()"
+    class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+    Simpan Jadwal
+  </button>
+</div>
 
   <div class="overflow-x-auto bg-white rounded-xl shadow">
     <table class="min-w-full table-fixed text-sm">
@@ -108,6 +141,52 @@ window.hapusJadwal = async function(id) {
 };
 
 loadJadwal();
+
+  import { 
+  getFirestore, 
+  collection, 
+  getDocs,
+  addDoc,
+  deleteDoc,
+  doc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const role = localStorage.getItem("role");
+
+// tampilkan form hanya admin
+if (role === "admin") {
+  document.getElementById("formContainer").classList.remove("hidden");
+}
+
+// ================= TAMBAH JADWAL =================
+window.tambahJadwal = async function() {
+
+  const hari = document.getElementById("hariInput").value;
+  const jam = document.getElementById("jamInput").value;
+  const level = document.getElementById("levelInput").value;
+  const pengajar = document.getElementById("pengajarInput").value;
+
+  if (!hari || !jam || !level || !pengajar) {
+    alert("Semua field wajib diisi!");
+    return;
+  }
+
+  await addDoc(jadwalRef, {
+    hari,
+    jam,
+    level,
+    pengajar
+  });
+
+  // reset form
+  document.getElementById("hariInput").value = "";
+  document.getElementById("jamInput").value = "";
+  document.getElementById("levelInput").value = "";
+  document.getElementById("pengajarInput").value = "";
+
+  loadJadwal();
+};
+
 </script>
 
 
