@@ -20,7 +20,7 @@ const firebaseConfig = {
 // ================= INIT =================
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const usersRef = collection(db, "Users");
+const usersRef = collection(db, "User"); // ✅ SINGULAR
 
 // ================= LOGIN FUNCTION =================
 window.login = async function () {
@@ -50,12 +50,10 @@ window.login = async function () {
 
     const userData = snapshot.docs[0].data();
 
-    // 🔥 Simpan ke localStorage
     localStorage.setItem("email", userData.email);
     localStorage.setItem("nama", userData.nama);
     localStorage.setItem("role", userData.role);
 
-    // 🔥 Redirect sesuai role
     if (userData.role === "admin") {
       window.location.href = "admin/index.html";
     } else {
@@ -68,7 +66,6 @@ window.login = async function () {
   }
 };
 
-// ================= LOGOUT =================
 window.logout = function () {
   localStorage.clear();
   window.location.href = "index.html";
