@@ -10,7 +10,6 @@ window.generateQR = function() {
   };
 
   document.getElementById("qrcode").innerHTML = "";
-
   new QRCode(document.getElementById("qrcode"), {
     text: JSON.stringify(token),
     width: 250,
