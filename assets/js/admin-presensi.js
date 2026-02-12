@@ -1,66 +1,113 @@
-const tbody = document.getElementById("rekap");
-const emailInput = document.getElementById("filterEmail");
-const dateInput = document.getElementById("filterDate");
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  deleteDoc,
+  doc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-let data = JSON.parse(localStorage.getItem("presensiData")) || [];
+// ================= FIREBASE CONFIG =================
+const firebaseConfig = {
+  apiKey: "AIzaSyDWe_8KQh5J5gzgKYDWnzNKiw-y1Vj3908",
+  authDomain: "jp-nihongo-class.firebaseapp.com",
+  projectId: "jp-nihongo-class",
+  storageBucket: "jp-nihongo-class.firebasestorage.app",
+  messagingSenderId: "102563702284",
+  appId: "1:102563702284:web:9a5166a4f7450127647029"
+};
 
-function render(list) {
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const presensiRef = collection(db, "Presensi");
+
+// ================= LOAD DATA =================
+async function loadData() {
+  const q = query(presensiRef, orderBy("createdAt", "desc"));
+  const snapshot = await getDocs(q);
+  render(snapshot);
+}
+
+// ================= RENDER =================
+function render(snapshot) {
+  const tbody = document.getElementById("rekap");
   tbody.innerHTML = "";
 
-  if (list.length === 0) {
+  if (snapshot.empty) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="3" class="p-4 text-center text-gray-500">
+        <td colspan="3" class="text-center p-4 text-gray-500">
           Data tidak ditemukan
         </td>
-      </tr>`;
+      </tr>
+    `;
     return;
   }
 
-  list.forEach(d => {
+  snapshot.forEach((item) => {
+    const data = item.data();
+
     tbody.innerHTML += `
       <tr class="border-t">
-        <td class="p-2">${d.email}</td>
-        <td class="p-2 text-center">${d.waktu}</td>
-        <td class="p-2 text-center">${d.status}</td>
-      </tr>`;
+        <td class="p-3">${data.email}</td>
+        <td class="p-3 text-center">
+          Masuk: ${data.jamMasuk || "-"} <br>
+          Pulang: ${data.jamPulang || "-"}
+        </td>
+        <td class="p-3 text-center">
+          ${data.statusMasuk || "-"}
+        </td>
+      </tr>
+    `;
   });
 }
 
-function applyFilter() {
-  let filtered = [...data];
+// ================= FILTER =================
+window.applyFilter = async function () {
+  const email = document.getElementById("filterEmail").value;
+  const tanggal = document.getElementById("filterDate").value;
 
-  const email = emailInput.value.trim().toLowerCase();
-  const date = dateInput.value; // format yyyy-mm-dd
+  let q = presensiRef;
 
-  if (email) {
-    filtered = filtered.filter(d =>
-      d.email.toLowerCase().includes(email)
+  if (email && tanggal) {
+    q = query(
+      presensiRef,
+      where("email", "==", email),
+      where("tanggal", "==", tanggal)
     );
+  } else if (email) {
+    q = query(presensiRef, where("email", "==", email));
+  } else if (tanggal) {
+    q = query(presensiRef, where("tanggal", "==", tanggal));
+  } else {
+    loadData();
+    return;
   }
 
-  if (date) {
-    filtered = filtered.filter(d =>
-      d.waktu.includes(date)
-    );
-  }
+  const snapshot = await getDocs(q);
+  render(snapshot);
+};
 
-  render(filtered);
-}
+// ================= RESET =================
+window.resetFilter = function () {
+  document.getElementById("filterEmail").value = "";
+  document.getElementById("filterDate").value = "";
+  loadData();
+};
 
-function resetFilter() {
-  emailInput.value = "";
-  dateInput.value = "";
-  render(data);
-}
+// ================= CLEAR ALL =================
+window.clearData = async function () {
+  if (!confirm("Yakin ingin menghapus semua presensi?")) return;
 
-function clearData() {
-  if (confirm("Yakin hapus semua data presensi?")) {
-    localStorage.removeItem("presensiData");
-    data = [];
-    render(data);
-  }
-}
+  const snapshot = await getDocs(presensiRef);
+  snapshot.forEach(async (item) => {
+    await deleteDoc(doc(db, "Presensi", item.id));
+  });
 
-// render awal
-render(data);
+  loadData();
+};
+
+loadData();
