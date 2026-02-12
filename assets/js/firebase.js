@@ -1,16 +1,22 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { initializeApp, getApps } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+import { getFirestore } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "ISI_PUNYA_KAMU",
-  authDomain: "ISI_PUNYA_KAMU",
-  projectId: "ISI_PUNYA_KAMU",
-  storageBucket: "ISI_PUNYA_KAMU",
-  messagingSenderId: "ISI_PUNYA_KAMU",
-  appId: "ISI_PUNYA_KAMU"
+  apiKey: "AIzaSyDWe_8KQh5J5gzgKYDWnzNKiw-y1Vj3908",
+  authDomain: "jp-nihongo-class.firebaseapp.com",
+  projectId: "jp-nihongo-class",
+  storageBucket: "jp-nihongo-class.firebasestorage.app",
+  messagingSenderId: "102563702284",
+  appId: "1:102563702284:web:9a5166a4f7450127647029"
 };
 
-export const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+const app = getApps().length === 0
+  ? initializeApp(firebaseConfig)
+  : getApps()[0];
+
+const db = getFirestore(app);
+
+export { db };
