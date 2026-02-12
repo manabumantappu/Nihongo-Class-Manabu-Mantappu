@@ -1,11 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  const isLogin = localStorage.getItem("login");
+  const email = localStorage.getItem("email");
   const role = localStorage.getItem("role");
 
   const isAdminPage = location.pathname.includes("/admin/");
 
-  if (!isLogin) {
+  // Jika belum login → kembali ke login
+  if (!email) {
     window.location.href = isAdminPage ? "../index.html" : "index.html";
     return;
   }
