@@ -23,27 +23,38 @@ const kalenderRef = collection(db, "Kalender");
 
 const role = localStorage.getItem("role");
 
-let selectedDate = null;
 let selectedEventId = null;
+let calendar;
 
-// ================= LOAD EVENTS =================
+// ================= FETCH EVENTS =================
 async function fetchEvents() {
   const snapshot = await getDocs(kalenderRef);
 
-  return snapshot.docs.map(d => ({
-    id: d.id,
-    title: d.data().judul,
-    start: d.data().tanggal,
-    extendedProps: {
-      kategori: d.data().kategori,
-      deskripsi: d.data().deskripsi
-    }
-  }));
+  return snapshot.docs.map(d => {
+
+    let warna = "#3b82f6"; // biru default
+
+    if (d.data().kategori === "Ujian") warna = "#ef4444";
+    if (d.data().kategori === "Libur") warna = "#22c55e";
+
+    return {
+      id: d.id,
+      title: d.data().judul,
+      start: d.data().tanggal,
+      backgroundColor: warna,
+      borderColor: warna,
+      extendedProps: {
+        kategori: d.data().kategori,
+        deskripsi: d.data().deskripsi
+      }
+    };
+  });
 }
 
+// ================= INIT =================
 document.addEventListener("DOMContentLoaded", async () => {
 
-  const calendar = new FullCalendar.Calendar(
+  calendar = new FullCalendar.Calendar(
     document.getElementById("calendar"),
     {
       initialView: "dayGridMonth",
@@ -51,8 +62,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       dateClick(info) {
         if (role !== "admin") return;
-        selectedDate = info.dateStr;
-        document.getElementById("modalTanggal").value = selectedDate;
+        document.getElementById("modalTanggal").value = info.dateStr;
         openModal();
       },
 
@@ -71,10 +81,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           document.getElementById("deleteBtn").classList.remove("hidden");
           document.getElementById("deleteBtn").onclick = async () => {
             await deleteDoc(doc(db, "Kalender", selectedEventId));
-            calendar.refetchawait deleteDoc(doc(db, "Kalender", selectedEventId));
-closeDetail();
-location.reload();
-Events();
+            calendar.refetchEvents();
             closeDetail();
           };
         }
@@ -92,33 +99,20 @@ Events();
   calendar.render();
 });
 
-// ================= MODAL CONTROL =================
-window.openModal = () => {
-  const modal = document.getElementById("eventModal");
-  modal.classList.remove("hidden");
-  modal.classList.add("flex");
-};
+// ================= MODAL =================
+window.openModal = () =>
+  document.getElementById("eventModal").classList.remove("hidden");
 
-window.closeModal = () => {
-  const modal = document.getElementById("eventModal");
-  modal.classList.remove("flex");
-  modal.classList.add("hidden");
-};
+window.closeModal = () =>
+  document.getElementById("eventModal").classList.add("hidden");
 
-window.openDetail = () => {
-  const modal = document.getElementById("detailModal");
-  modal.classList.remove("hidden");
-  modal.classList.add("flex");
-};
+window.openDetail = () =>
+  document.getElementById("detailModal").classList.remove("hidden");
 
-window.closeDetail = () => {
-  const modal = document.getElementById("detailModal");
-  modal.classList.remove("flex");
-  modal.classList.add("hidden");
-};
+window.closeDetail = () =>
+  document.getElementById("detailModal").classList.add("hidden");
 
-
-// ================= SAVE EVENT =================
+// ================= SAVE =================
 window.saveEvent = async function () {
 
   const judul = document.getElementById("modalJudul").value;
@@ -131,15 +125,13 @@ window.saveEvent = async function () {
     return;
   }
 
- await addDoc(kalenderRef, {
-  judul,
-  tanggal,
-  kategori,
-  deskripsi
-});
+  await addDoc(kalenderRef, {
+    judul,
+    tanggal,
+    kategori,
+    deskripsi
+  });
 
-closeModal();
-selectedDate = null;
-location.reload(); // sementara biar aman
-
+  closeModal();
+  calendar.refetchEvents();
 };
