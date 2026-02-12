@@ -131,13 +131,15 @@ window.saveEvent = async function () {
     return;
   }
 
-  await addDoc(kalenderRef, {
-    judul,
-    tanggal,
-    kategori,
-    deskripsi
-  });
+ await addDoc(kalenderRef, {
+  judul,
+  tanggal,
+  kategori,
+  deskripsi
+});
 
-  closeModal();
-  location.reload();
+closeModal();
+selectedDate = null;
+location.reload(); // sementara biar aman
+
 };
