@@ -8,7 +8,6 @@ import {
   addDoc,
   updateDoc,
   doc,
-  orderBy,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -38,6 +37,10 @@ function getTime() {
 
 function getEmail() {
   return localStorage.getItem("email");
+}
+
+function getNama() {
+  return localStorage.getItem("nama") || "-";
 }
 
 function showInfo(message, color = "green") {
@@ -73,12 +76,13 @@ async function loadRiwayat() {
     return;
   }
 
-  // sorting manual berdasarkan tanggal terbaru
   let dataList = [];
-  snapshot.forEach(doc => {
-    dataList.push(doc.data());
+
+  snapshot.forEach(docSnap => {
+    dataList.push(docSnap.data());
   });
 
+  // Sort terbaru berdasarkan tanggal
   dataList.sort((a, b) => b.tanggal.localeCompare(a.tanggal));
 
   dataList.forEach(data => {
@@ -94,12 +98,16 @@ async function loadRiwayat() {
   });
 }
 
-
 // ================= ABSEN MASUK =================
 document.getElementById("masuk").addEventListener("click", async () => {
 
   const email = getEmail();
-  if (!email) return alert("Email tidak ditemukan");
+  const nama = getNama();
+
+  if (!email) {
+    alert("Email tidak ditemukan");
+    return;
+  }
 
   const tanggal = getToday();
   const waktu = getTime();
@@ -122,6 +130,7 @@ document.getElementById("masuk").addEventListener("click", async () => {
 
   await addDoc(presensiRef, {
     email,
+    nama,
     tanggal,
     jamMasuk: waktu,
     jamPulang: null,
@@ -138,7 +147,10 @@ document.getElementById("masuk").addEventListener("click", async () => {
 document.getElementById("pulang").addEventListener("click", async () => {
 
   const email = getEmail();
-  if (!email) return alert("Email tidak ditemukan");
+  if (!email) {
+    alert("Email tidak ditemukan");
+    return;
+  }
 
   const tanggal = getToday();
   const waktu = getTime();
@@ -173,5 +185,5 @@ document.getElementById("pulang").addEventListener("click", async () => {
   loadRiwayat();
 });
 
-// ================= INIT LOAD =================
+// ================= INIT =================
 loadRiwayat();
