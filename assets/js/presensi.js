@@ -54,8 +54,7 @@ async function loadRiwayat() {
 
   const q = query(
     presensiRef,
-    where("email", "==", email),
-    orderBy("createdAt", "desc")
+    where("email", "==", email)
   );
 
   const snapshot = await getDocs(q);
@@ -63,9 +62,26 @@ async function loadRiwayat() {
   const tbody = document.getElementById("table");
   tbody.innerHTML = "";
 
-  snapshot.forEach((item) => {
-    const data = item.data();
+  if (snapshot.empty) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5" class="text-center p-4 text-gray-500">
+          Belum ada data presensi
+        </td>
+      </tr>
+    `;
+    return;
+  }
 
+  // sorting manual berdasarkan tanggal terbaru
+  let dataList = [];
+  snapshot.forEach(doc => {
+    dataList.push(doc.data());
+  });
+
+  dataList.sort((a, b) => b.tanggal.localeCompare(a.tanggal));
+
+  dataList.forEach(data => {
     tbody.innerHTML += `
       <tr class="hover:bg-gray-50">
         <td class="p-3">${data.tanggal}</td>
@@ -77,6 +93,7 @@ async function loadRiwayat() {
     `;
   });
 }
+
 
 // ================= ABSEN MASUK =================
 document.getElementById("masuk").addEventListener("click", async () => {
