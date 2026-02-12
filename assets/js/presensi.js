@@ -1,6 +1,7 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+// ================= IMPORT FIREBASE CENTRAL =================
+import { db } from "./firebase.js";
+
 import {
-  getFirestore,
   collection,
   query,
   where,
@@ -11,19 +12,7 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// ================= FIREBASE CONFIG =================
-const firebaseConfig = {
-  apiKey: "AIzaSyDWe_8KQh5J5gzgKYDWnzNKiw-y1Vj3908",
-  authDomain: "jp-nihongo-class.firebaseapp.com",
-  projectId: "jp-nihongo-class",
-  storageBucket: "jp-nihongo-class.firebasestorage.app",
-  messagingSenderId: "102563702284",
-  appId: "1:102563702284:web:9a5166a4f7450127647029"
-};
-
 // ================= INIT =================
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 const presensiRef = collection(db, "Presensi");
 
 // ================= HELPERS =================
@@ -45,13 +34,17 @@ function getNama() {
 
 function showInfo(message, color = "green") {
   const box = document.getElementById("infoBox");
+  if (!box) return;
+
   box.classList.remove("hidden");
-  box.className = `mb-6 p-4 bg-${color}-100 text-${color}-700 rounded shadow text-sm`;
+  box.className =
+    `mb-6 p-4 bg-${color}-100 text-${color}-700 rounded shadow text-sm`;
   box.textContent = message;
 }
 
 // ================= LOAD RIWAYAT =================
 async function loadRiwayat() {
+
   const email = getEmail();
   if (!email) return;
 
@@ -63,6 +56,8 @@ async function loadRiwayat() {
   const snapshot = await getDocs(q);
 
   const tbody = document.getElementById("table");
+  if (!tbody) return;
+
   tbody.innerHTML = "";
 
   if (snapshot.empty) {
@@ -82,7 +77,7 @@ async function loadRiwayat() {
     dataList.push(docSnap.data());
   });
 
-  // Sort terbaru berdasarkan tanggal
+  // 🔥 Urut terbaru berdasarkan tanggal
   dataList.sort((a, b) => b.tanggal.localeCompare(a.tanggal));
 
   dataList.forEach(data => {
@@ -99,7 +94,7 @@ async function loadRiwayat() {
 }
 
 // ================= ABSEN MASUK =================
-document.getElementById("masuk").addEventListener("click", async () => {
+document.getElementById("masuk")?.addEventListener("click", async () => {
 
   const email = getEmail();
   const nama = getNama();
@@ -128,23 +123,23 @@ document.getElementById("masuk").addEventListener("click", async () => {
   const batas = "09:00:00";
   const status = waktu > batas ? "Terlambat" : "Hadir";
 
- await addDoc(presensiRef, {
-  nama: localStorage.getItem("nama"), // 🔥 WAJIB ADA
-  email,
-  tanggal,
-  jamMasuk: waktu,
-  jamPulang: null,
-  statusMasuk: status,
-  statusPulang: null,
-  createdAt: serverTimestamp()
-});
+  await addDoc(presensiRef, {
+    nama,                 // 🔥 WAJIB ADA
+    email,
+    tanggal,
+    jamMasuk: waktu,
+    jamPulang: null,
+    statusMasuk: status,
+    statusPulang: null,
+    createdAt: serverTimestamp()
+  });
 
   showInfo("Absen masuk berhasil!", "green");
   loadRiwayat();
 });
 
 // ================= ABSEN PULANG =================
-document.getElementById("pulang").addEventListener("click", async () => {
+document.getElementById("pulang")?.addEventListener("click", async () => {
 
   const email = getEmail();
   if (!email) {
