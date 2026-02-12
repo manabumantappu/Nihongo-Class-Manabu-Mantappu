@@ -8,10 +8,7 @@
 
 <body class="bg-gray-100">
 
-<!-- 🔐 GUARD (ADMIN ONLY) -->
 <script src="../assets/js/guard.js"></script>
-
-<!-- 🧭 NAVBAR GLOBAL -->
 <script src="../assets/js/navbar.js"></script>
 
 <div class="max-w-7xl mx-auto p-6 mt-6">
@@ -48,16 +45,19 @@
   </div>
 
   <!-- TABLE -->
-  <table class="w-full bg-white rounded shadow text-sm">
-    <thead class="bg-gray-100">
-      <tr>
-        <th class="p-3 text-left">Email</th>
-        <th class="p-3">Waktu</th>
-        <th class="p-3">Status</th>
-      </tr>
-    </thead>
-    <tbody id="rekap"></tbody>
-  </table>
+  <div class="overflow-x-auto bg-white rounded shadow">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="p-3 text-left">Nama</th>
+          <th class="p-3 text-left">Email</th>
+          <th class="p-3 text-center">Waktu</th>
+          <th class="p-3 text-center">Status</th>
+        </tr>
+      </thead>
+      <tbody id="rekap"></tbody>
+    </table>
+  </div>
 
   <button
     onclick="clearData()"
@@ -67,12 +67,8 @@
   </button>
 </div>
 
-<!-- 🔑 AUTH -->
 <script src="../assets/js/auth.js"></script>
-
-<!-- 📊 LOGIC PRESENSI ADMIN -->
 <script type="module" src="../assets/js/admin-presensi.js"></script>
-
 
 </body>
 </html>
