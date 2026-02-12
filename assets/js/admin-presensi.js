@@ -5,10 +5,10 @@ import {
   getDocs,
   query,
   where,
-  orderBy,
   deleteDoc,
   doc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
 // ================= FIREBASE CONFIG =================
 const firebaseConfig = {
   apiKey: "AIzaSyDWe_8KQh5J5gzgKYDWnzNKiw-y1Vj3908",
@@ -19,14 +19,14 @@ const firebaseConfig = {
   appId: "1:102563702284:web:9a5166a4f7450127647029"
 };
 
+// ================= INIT =================
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const presensiRef = collection(db, "Presensi");
 
 // ================= LOAD DATA =================
 async function loadData() {
-  const q = query(presensiRef, orderBy("createdAt", "desc"));
-  const snapshot = await getDocs(q);
+  const snapshot = await getDocs(presensiRef);
   render(snapshot);
 }
 
@@ -38,7 +38,7 @@ function render(snapshot) {
   if (snapshot.empty) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="3" class="text-center p-4 text-gray-500">
+        <td colspan="4" class="text-center p-4 text-gray-500">
           Data tidak ditemukan
         </td>
       </tr>
@@ -46,13 +46,22 @@ function render(snapshot) {
     return;
   }
 
-  snapshot.forEach((item) => {
-    const data = item.data();
+  let dataList = [];
 
+  snapshot.forEach((item) => {
+    dataList.push(item.data());
+  });
+
+  // Sort manual berdasarkan tanggal terbaru
+  dataList.sort((a, b) => b.tanggal.localeCompare(a.tanggal));
+
+  dataList.forEach((data) => {
     tbody.innerHTML += `
-      <tr class="border-t">
+      <tr class="border-t hover:bg-gray-50">
+        <td class="p-3">${data.nama || "-"}</td>
         <td class="p-3">${data.email}</td>
         <td class="p-3 text-center">
+          ${data.tanggal} <br>
           Masuk: ${data.jamMasuk || "-"} <br>
           Pulang: ${data.jamPulang || "-"}
         </td>
@@ -66,10 +75,10 @@ function render(snapshot) {
 
 // ================= FILTER =================
 window.applyFilter = async function () {
-  const email = document.getElementById("filterEmail").value;
+  const email = document.getElementById("filterEmail").value.trim();
   const tanggal = document.getElementById("filterDate").value;
 
-  let q = presensiRef;
+  let q;
 
   if (email && tanggal) {
     q = query(
@@ -102,11 +111,13 @@ window.clearData = async function () {
   if (!confirm("Yakin ingin menghapus semua presensi?")) return;
 
   const snapshot = await getDocs(presensiRef);
-  snapshot.forEach(async (item) => {
+
+  for (const item of snapshot.docs) {
     await deleteDoc(doc(db, "Presensi", item.id));
-  });
+  }
 
   loadData();
 };
 
+// ================= INIT =================
 loadData();
