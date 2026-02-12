@@ -132,9 +132,21 @@ async function loadJadwal() {
   });
 
   // 🔥 SORT berdasarkan hari
-  dataList.sort((a, b) => {
-    return (urutanHari[a.hari] || 99) - (urutanHari[b.hari] || 99);
-  });
+dataList.sort((a, b) => {
+
+  // 1️⃣ Urut berdasarkan hari dulu
+  const urutHari =
+    (urutanHari[a.hari] || 99) - (urutanHari[b.hari] || 99);
+
+  if (urutHari !== 0) return urutHari;
+
+  // 2️⃣ Kalau hari sama → urut berdasarkan jam mulai
+  const jamA = a.jam.split(" - ")[0];
+  const jamB = b.jam.split(" - ")[0];
+
+  return jamA.localeCompare(jamB);
+});
+
 
   // Render setelah diurutkan
   dataList.forEach((data) => {
