@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Generate QR Presensi</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+
+<body class="bg-gray-100 p-10">
+
+<h1 class="text-2xl font-semibold mb-6">QR Presensi Hari Ini</h1>
+
+<button onclick="generateQR()"
+  class="bg-blue-600 text-white px-6 py-2 rounded">
+  Generate QR Hari Ini
+</button>
+
+<div id="qrcode" class="mt-8"></div>
+
+<script type="module" src="../assets/js/qr-generate.js"></script>
+</body>
+</html>
