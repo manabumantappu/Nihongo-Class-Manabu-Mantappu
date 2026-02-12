@@ -9,32 +9,59 @@
 
 <body class="bg-gray-100">
 
+<!-- GUARD & NAVBAR -->
 <script src="assets/js/guard.js"></script>
 <script src="assets/js/navbar.js"></script>
 <script src="assets/js/auth.js"></script>
 
 <div class="max-w-6xl mx-auto p-6">
-  <h1 class="text-xl font-semibold mb-4">Presensi</h1>
 
-  <div class="flex gap-3 mb-4">
-    <button id="masuk" class="bg-green-600 text-white px-4 py-2 rounded">
+  <h1 class="text-xl font-semibold mb-6">Presensi Siswa</h1>
+
+  <!-- BUTTON ABSEN -->
+  <div class="flex flex-wrap gap-3 mb-6">
+    <button id="masuk"
+      class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow">
       Absen Masuk
     </button>
-    <button id="pulang" class="bg-blue-600 text-white px-4 py-2 rounded">
+
+    <button id="pulang"
+      class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
       Absen Pulang
     </button>
   </div>
 
-  <table class="w-full bg-white rounded shadow text-sm">
-    <tbody id="table"></tbody>
-  </table>
+  <!-- STATUS INFO -->
+  <div id="infoBox"
+    class="hidden mb-6 p-4 bg-white rounded shadow text-sm">
+  </div>
 
-  <a href="dashboard.html" class="inline-block mt-6 text-blue-600">
+  <!-- RIWAYAT PRESENSI -->
+  <div class="overflow-x-auto bg-white rounded-xl shadow">
+    <table class="min-w-full text-sm">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="p-3 text-left">Tanggal</th>
+          <th class="p-3 text-center">Jam Masuk</th>
+          <th class="p-3 text-center">Status Masuk</th>
+          <th class="p-3 text-center">Jam Pulang</th>
+          <th class="p-3 text-center">Status Pulang</th>
+        </tr>
+      </thead>
+      <tbody id="table" class="divide-y divide-gray-200">
+        <!-- Data presensi otomatis masuk di sini -->
+      </tbody>
+    </table>
+  </div>
+
+  <a href="dashboard.html"
+    class="inline-block mt-6 text-blue-600 hover:underline">
     ← Kembali ke Dashboard
   </a>
+
 </div>
 
-<!-- ✅ WAJIB -->
+<!-- SCRIPT PRESENSI -->
 <script type="module" src="assets/js/presensi.js"></script>
 
 </body>
