@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  
+  <style>
+@keyframes scaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.animate-scale {
+  animation: scaleIn 0.2s ease-out;
+}
+</style>
+
   <meta charset="UTF-8">
   <title>Kalender</title>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -58,26 +70,30 @@
 </div>
 
 <!-- ================= MODAL DETAIL ================= -->
-<div id="detailModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center">
-  <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+<div id="detailModal"
+  class="fixed inset-0 hidden items-center justify-center bg-black/50 backdrop-blur-sm z-50">
 
-    <h2 class="text-lg font-semibold mb-4">Detail Event</h2>
+  <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 animate-scale">
 
-    <p id="detailContent" class="text-sm mb-4"></p>
+    <h2 class="text-xl font-semibold mb-4">Detail Event</h2>
+
+    <div id="detailContent" class="text-sm space-y-2 mb-6"></div>
 
     <div class="flex justify-end gap-2">
       <button onclick="closeDetail()"
-        class="px-4 py-2 bg-gray-400 text-white rounded">
+        class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500">
         Tutup
       </button>
+
       <button id="deleteBtn"
-        class="px-4 py-2 bg-red-600 text-white rounded hidden">
+        class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 hidden">
         Hapus
       </button>
     </div>
 
   </div>
 </div>
+
 
 <script type="module" src="assets/js/kalender.js"></script>
 <script type="module" src="assets/js/auth.js"></script>
