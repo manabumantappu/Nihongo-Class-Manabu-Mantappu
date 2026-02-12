@@ -21,14 +21,14 @@
     <table class="min-w-full table-fixed text-sm">
       
       <thead class="bg-gray-100">
-        <tr>
-          <th class="p-3 text-left w-1/4">Hari</th>
-          <th class="p-3 text-center w-1/4">Jam</th>
-          <th class="p-3 text-center w-1/4">Level</th>
-          <th class="p-3 text-center w-1/4">Pengajar</th>
-        </tr>
-      </thead>
-
+  <tr>
+    <th class="p-3 text-left w-1/5">Hari</th>
+    <th class="p-3 text-center w-1/5">Jam</th>
+    <th class="p-3 text-center w-1/5">Level</th>
+    <th class="p-3 text-center w-1/5">Pengajar</th>
+    <th class="p-3 text-center w-1/5" id="aksiHeader">Aksi</th>
+  </tr>
+</thead>
       <tbody id="jadwalBody" class="divide-y divide-gray-200">
         <!-- Data Firebase akan masuk di sini -->
       </tbody>
@@ -43,10 +43,11 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { 
   getFirestore, 
   collection, 
-  getDocs 
+  getDocs,
+  deleteDoc,
+  doc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// ================= FIREBASE CONFIG =================
 const firebaseConfig = {
   apiKey: "AIzaSyDWe_8KQh5J5gzgKYDWnzNKiw-y1Vj3908",
   authDomain: "jp-nihongo-class.firebaseapp.com",
@@ -56,64 +57,59 @@ const firebaseConfig = {
   appId: "1:102563702284:web:9a5166a4f7450127647029"
 };
 
-// ================= INIT =================
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
-// ⚠️ HARUS sama persis dengan nama collection di Firestore
 const jadwalRef = collection(db, "Jadwal");
 
-// ================= URUTAN HARI =================
-const urutanHari = {
-  "Senin": 1,
-  "Selasa": 2,
-  "Rabu": 3,
-  "Kamis": 4,
-  "Jumat": 5,
-  "Sabtu": 6,
-  "Minggu": 7
-};
+const role = localStorage.getItem("role");
 
 // ================= LOAD DATA =================
 async function loadJadwal() {
-  try {
-    const snapshot = await getDocs(jadwalRef);
-    const tbody = document.getElementById("jadwalBody");
+  const snapshot = await getDocs(jadwalRef);
+  const tbody = document.getElementById("jadwalBody");
+  tbody.innerHTML = "";
 
-    if (!tbody) return;
+  snapshot.forEach((item) => {
+    const data = item.data();
+    const id = item.id;
 
-    let dataList = [];
+    tbody.innerHTML += `
+      <tr class="hover:bg-gray-50">
+        <td class="p-3">${data.hari}</td>
+        <td class="p-3 text-center">${data.jam}</td>
+        <td class="p-3 text-center">${data.level}</td>
+        <td class="p-3 text-center">${data.pengajar}</td>
+        ${
+          role === "admin"
+          ? `<td class="p-3 text-center">
+              <button onclick="hapusJadwal('${id}')" 
+                class="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600">
+                Hapus
+              </button>
+            </td>`
+          : ""
+        }
+      </tr>
+    `;
+  });
 
-    snapshot.forEach((doc) => {
-      const data = doc.data();
-      dataList.push(data);
-    });
-
-    // Sort berdasarkan urutan hari
-    dataList.sort((a, b) => {
-      return (urutanHari[a.hari] || 99) - (urutanHari[b.hari] || 99);
-    });
-
-    tbody.innerHTML = "";
-
-    dataList.forEach((data) => {
-      tbody.innerHTML += `
-        <tr class="border-b hover:bg-gray-50">
-          <td class="p-3">${data.hari || "-"}</td>
-          <td class="p-3">${data.jam || "-"}</td>
-          <td class="p-3">${data.level || "-"}</td>
-          <td class="p-3">${data.pengajar || "-"}</td>
-        </tr>
-      `;
-    });
-
-  } catch (error) {
-    console.error("Error load jadwal:", error);
+  // sembunyikan header aksi kalau bukan admin
+  if (role !== "admin") {
+    const header = document.getElementById("aksiHeader");
+    if (header) header.style.display = "none";
   }
 }
 
+window.hapusJadwal = async function(id) {
+  if (confirm("Yakin ingin menghapus jadwal ini?")) {
+    await deleteDoc(doc(db, "Jadwal", id));
+    loadJadwal();
+  }
+};
+
 loadJadwal();
 </script>
+
 
 
 <!-- 🔑 AUTH (LOGOUT) -->
