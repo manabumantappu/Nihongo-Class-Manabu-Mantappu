@@ -128,16 +128,16 @@ document.getElementById("masuk").addEventListener("click", async () => {
   const batas = "09:00:00";
   const status = waktu > batas ? "Terlambat" : "Hadir";
 
-  await addDoc(presensiRef, {
-    email,
-    nama,
-    tanggal,
-    jamMasuk: waktu,
-    jamPulang: null,
-    statusMasuk: status,
-    statusPulang: null,
-    createdAt: serverTimestamp()
-  });
+ await addDoc(presensiRef, {
+  nama: localStorage.getItem("nama"), // 🔥 WAJIB ADA
+  email,
+  tanggal,
+  jamMasuk: waktu,
+  jamPulang: null,
+  statusMasuk: status,
+  statusPulang: null,
+  createdAt: serverTimestamp()
+});
 
   showInfo("Absen masuk berhasil!", "green");
   loadRiwayat();
