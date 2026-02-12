@@ -32,13 +32,14 @@ async function loadData() {
 
 // ================= RENDER =================
 function render(snapshot) {
+
   const tbody = document.getElementById("rekap");
   tbody.innerHTML = "";
 
   if (snapshot.empty) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="4" class="text-center p-4 text-gray-500">
+        <td colspan="6" class="text-center p-4 text-gray-500">
           Data tidak ditemukan
         </td>
       </tr>
@@ -46,34 +47,26 @@ function render(snapshot) {
     return;
   }
 
-  let dataList = [];
-
   snapshot.forEach((item) => {
-    dataList.push(item.data());
-  });
 
-  // Sort manual berdasarkan tanggal terbaru
-  dataList.sort((a, b) => b.tanggal.localeCompare(a.tanggal));
+    const data = item.data();
 
-  dataList.forEach((data) => {
     tbody.innerHTML += `
       <tr class="border-t hover:bg-gray-50">
         <td class="p-3">${data.nama || "-"}</td>
-        <td class="p-3">${data.email}</td>
-       <tbody.innerHTML += `
-  <tr class="border-t">
-    <td class="p-3">${data.nama || "-"}</td>
-    <td class="p-3">${data.email}</td>
-    <td class="p-3 text-center">${data.tanggal}</td>
-    <td class="p-3 text-center">${data.jamMasuk || "-"}</td>
-    <td class="p-3 text-center">${data.jamPulang || "-"}</td>
-    <td class="p-3 text-center">
-      ${data.statusMasuk || "-"}
-    </td>
-  </tr>
-`;
-});
+        <td class="p-3">${data.email || "-"}</td>
+        <td class="p-3 text-center">${data.tanggal || "-"}</td>
+        <td class="p-3 text-center">${data.jamMasuk || "-"}</td>
+        <td class="p-3 text-center">${data.jamPulang || "-"}</td>
+        <td class="p-3 text-center">
+          ${data.statusMasuk || "-"}
+        </td>
+      </tr>
+    `;
+
+  });
 }
+
 
 // ================= FILTER =================
 window.applyFilter = async function () {
