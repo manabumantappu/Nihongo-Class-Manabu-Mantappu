@@ -9,7 +9,6 @@ import {
   deleteDoc,
   doc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
 // ================= FIREBASE CONFIG =================
 const firebaseConfig = {
   apiKey: "AIzaSyDWe_8KQh5J5gzgKYDWnzNKiw-y1Vj3908",
