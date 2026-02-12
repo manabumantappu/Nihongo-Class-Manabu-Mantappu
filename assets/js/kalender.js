@@ -4,8 +4,8 @@ import {
   collection,
   getDocs,
   addDoc,
-  query,
-  orderBy
+  deleteDoc,
+  doc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -23,68 +23,86 @@ const kalenderRef = collection(db, "Kalender");
 
 const role = localStorage.getItem("role");
 
-// Tampilkan form hanya admin
-if (role === "admin") {
-  document.getElementById("formKalender").classList.remove("hidden");
+// 🎨 Warna berdasarkan kategori
+function getColor(kategori) {
+  if (kategori === "Libur") return "#ef4444";
+  if (kategori === "Ujian") return "#f59e0b";
+  return "#3b82f6"; // Kelas
 }
 
-// ================= LOAD EVENT =================
-async function loadEvent() {
+async function loadEvents() {
 
-  const q = query(kalenderRef, orderBy("tanggal", "asc"));
-  const snapshot = await getDocs(q);
+  const snapshot = await getDocs(kalenderRef);
 
-  const list = document.getElementById("eventList");
-  list.innerHTML = "";
+  return snapshot.docs.map(docSnap => {
+    const data = docSnap.data();
 
-  if (snapshot.empty) {
-    list.innerHTML = `<p class="text-gray-500">Belum ada event</p>`;
-    return;
-  }
-
-  snapshot.forEach(doc => {
-    const data = doc.data();
-
-    list.innerHTML += `
-      <div class="bg-white p-4 rounded shadow">
-        <div class="flex justify-between items-center">
-          <h3 class="font-semibold">${data.judul}</h3>
-          <span class="text-sm text-gray-500">${data.tanggal}</span>
-        </div>
-        <p class="text-sm mt-2">${data.deskripsi || "-"}</p>
-        <span class="inline-block mt-2 text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
-          ${data.kategori}
-        </span>
-      </div>
-    `;
+    return {
+      id: docSnap.id,
+      title: data.judul,
+      start: data.tanggal,
+      backgroundColor: getColor(data.kategori),
+      borderColor: getColor(data.kategori),
+      extendedProps: {
+        kategori: data.kategori,
+        deskripsi: data.deskripsi
+      }
+    };
   });
 }
 
-// ================= TAMBAH EVENT =================
-window.tambahEvent = async function() {
+document.addEventListener("DOMContentLoaded", async function () {
 
-  const judul = document.getElementById("judul").value;
-  const tanggal = document.getElementById("tanggal").value;
-  const kategori = document.getElementById("kategori").value;
-  const deskripsi = document.getElementById("deskripsi").value;
+  const calendarEl = document.getElementById("calendar");
 
-  if (!judul || !tanggal) {
-    alert("Judul dan tanggal wajib diisi");
-    return;
-  }
+  const calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: "dayGridMonth",
+    selectable: role === "admin",
 
-  await addDoc(kalenderRef, {
-    judul,
-    tanggal,
-    kategori,
-    deskripsi
+    dateClick: async function(info) {
+      if (role !== "admin") return;
+
+      const judul = prompt("Judul Event:");
+      if (!judul) return;
+
+      const kategori = prompt("Kategori (Kelas/Libur/Ujian):", "Kelas");
+      const deskripsi = prompt("Deskripsi:");
+
+      await addDoc(kalenderRef, {
+        judul,
+        tanggal: info.dateStr,
+        kategori,
+        deskripsi
+      });
+
+      calendar.refetchEvents();
+    },
+
+    eventClick: async function(info) {
+
+      const data = info.event.extendedProps;
+
+      alert(
+        "Judul: " + info.event.title +
+        "\nTanggal: " + info.event.startStr +
+        "\nKategori: " + data.kategori +
+        "\nDeskripsi: " + (data.deskripsi || "-")
+      );
+
+      if (role === "admin") {
+        if (confirm("Hapus event ini?")) {
+          await deleteDoc(doc(db, "Kalender", info.event.id));
+          info.event.remove();
+        }
+      }
+    },
+
+    events: async function(fetchInfo, successCallback) {
+      const events = await loadEvents();
+      successCallback(events);
+    }
+
   });
 
-  document.getElementById("judul").value = "";
-  document.getElementById("tanggal").value = "";
-  document.getElementById("deskripsi").value = "";
-
-  loadEvent();
-};
-
-loadEvent();
+  calendar.render();
+});
