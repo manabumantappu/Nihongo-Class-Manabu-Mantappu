@@ -60,17 +60,19 @@ function render(snapshot) {
       <tr class="border-t hover:bg-gray-50">
         <td class="p-3">${data.nama || "-"}</td>
         <td class="p-3">${data.email}</td>
-        <td class="p-3 text-center">
-          ${data.tanggal} <br>
-          Masuk: ${data.jamMasuk || "-"} <br>
-          Pulang: ${data.jamPulang || "-"}
-        </td>
-        <td class="p-3 text-center">
-          ${data.statusMasuk || "-"}
-        </td>
-      </tr>
-    `;
-  });
+       <tbody.innerHTML += `
+  <tr class="border-t">
+    <td class="p-3">${data.nama || "-"}</td>
+    <td class="p-3">${data.email}</td>
+    <td class="p-3 text-center">${data.tanggal}</td>
+    <td class="p-3 text-center">${data.jamMasuk || "-"}</td>
+    <td class="p-3 text-center">${data.jamPulang || "-"}</td>
+    <td class="p-3 text-center">
+      ${data.statusMasuk || "-"}
+    </td>
+  </tr>
+`;
+});
 }
 
 // ================= FILTER =================
