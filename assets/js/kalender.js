@@ -71,7 +71,10 @@ document.addEventListener("DOMContentLoaded", async () => {
           document.getElementById("deleteBtn").classList.remove("hidden");
           document.getElementById("deleteBtn").onclick = async () => {
             await deleteDoc(doc(db, "Kalender", selectedEventId));
-            calendar.refetchEvents();
+            calendar.refetchawait deleteDoc(doc(db, "Kalender", selectedEventId));
+closeDetail();
+location.reload();
+Events();
             closeDetail();
           };
         }
@@ -90,17 +93,30 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 // ================= MODAL CONTROL =================
-window.openModal = () =>
-  document.getElementById("eventModal").classList.remove("hidden");
+window.openModal = () => {
+  const modal = document.getElementById("eventModal");
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
+};
 
-window.closeModal = () =>
-  document.getElementById("eventModal").classList.add("hidden");
+window.closeModal = () => {
+  const modal = document.getElementById("eventModal");
+  modal.classList.remove("flex");
+  modal.classList.add("hidden");
+};
 
-window.openDetail = () =>
-  document.getElementById("detailModal").classList.remove("hidden");
+window.openDetail = () => {
+  const modal = document.getElementById("detailModal");
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
+};
 
-window.closeDetail = () =>
-  document.getElementById("detailModal").classList.add("hidden");
+window.closeDetail = () => {
+  const modal = document.getElementById("detailModal");
+  modal.classList.remove("flex");
+  modal.classList.add("hidden");
+};
+
 
 // ================= SAVE EVENT =================
 window.saveEvent = async function () {
