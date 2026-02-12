@@ -8,6 +8,7 @@ import {
   addDoc,
   updateDoc,
   doc,
+  orderBy,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -21,6 +22,7 @@ const firebaseConfig = {
   appId: "1:102563702284:web:9a5166a4f7450127647029"
 };
 
+// ================= INIT =================
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const presensiRef = collection(db, "Presensi");
@@ -38,6 +40,44 @@ function getEmail() {
   return localStorage.getItem("email");
 }
 
+function showInfo(message, color = "green") {
+  const box = document.getElementById("infoBox");
+  box.classList.remove("hidden");
+  box.className = `mb-6 p-4 bg-${color}-100 text-${color}-700 rounded shadow text-sm`;
+  box.textContent = message;
+}
+
+// ================= LOAD RIWAYAT =================
+async function loadRiwayat() {
+  const email = getEmail();
+  if (!email) return;
+
+  const q = query(
+    presensiRef,
+    where("email", "==", email),
+    orderBy("createdAt", "desc")
+  );
+
+  const snapshot = await getDocs(q);
+
+  const tbody = document.getElementById("table");
+  tbody.innerHTML = "";
+
+  snapshot.forEach((item) => {
+    const data = item.data();
+
+    tbody.innerHTML += `
+      <tr class="hover:bg-gray-50">
+        <td class="p-3">${data.tanggal}</td>
+        <td class="p-3 text-center">${data.jamMasuk || "-"}</td>
+        <td class="p-3 text-center">${data.statusMasuk || "-"}</td>
+        <td class="p-3 text-center">${data.jamPulang || "-"}</td>
+        <td class="p-3 text-center">${data.statusPulang || "-"}</td>
+      </tr>
+    `;
+  });
+}
+
 // ================= ABSEN MASUK =================
 document.getElementById("masuk").addEventListener("click", async () => {
 
@@ -47,7 +87,6 @@ document.getElementById("masuk").addEventListener("click", async () => {
   const tanggal = getToday();
   const waktu = getTime();
 
-  // Cek apakah sudah absen hari ini
   const q = query(
     presensiRef,
     where("email", "==", email),
@@ -57,11 +96,10 @@ document.getElementById("masuk").addEventListener("click", async () => {
   const snapshot = await getDocs(q);
 
   if (!snapshot.empty) {
-    alert("Sudah absen masuk hari ini!");
+    showInfo("Sudah absen masuk hari ini!", "yellow");
     return;
   }
 
-  // Cek terlambat (misal lewat jam 09:00)
   const batas = "09:00:00";
   const status = waktu > batas ? "Terlambat" : "Hadir";
 
@@ -75,7 +113,8 @@ document.getElementById("masuk").addEventListener("click", async () => {
     createdAt: serverTimestamp()
   });
 
-  alert("Absen masuk berhasil!");
+  showInfo("Absen masuk berhasil!", "green");
+  loadRiwayat();
 });
 
 // ================= ABSEN PULANG =================
@@ -96,7 +135,7 @@ document.getElementById("pulang").addEventListener("click", async () => {
   const snapshot = await getDocs(q);
 
   if (snapshot.empty) {
-    alert("Belum absen masuk hari ini!");
+    showInfo("Belum absen masuk hari ini!", "red");
     return;
   }
 
@@ -104,7 +143,7 @@ document.getElementById("pulang").addEventListener("click", async () => {
   const ref = doc(db, "Presensi", docData.id);
 
   if (docData.data().jamPulang) {
-    alert("Sudah absen pulang!");
+    showInfo("Sudah absen pulang!", "yellow");
     return;
   }
 
@@ -113,5 +152,9 @@ document.getElementById("pulang").addEventListener("click", async () => {
     statusPulang: "Pulang"
   });
 
-  alert("Absen pulang berhasil!");
+  showInfo("Absen pulang berhasil!", "blue");
+  loadRiwayat();
 });
+
+// ================= INIT LOAD =================
+loadRiwayat();
