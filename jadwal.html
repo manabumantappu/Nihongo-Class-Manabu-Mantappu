@@ -43,6 +43,84 @@
   </table>
 </div>
 
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { 
+  getFirestore, 
+  collection, 
+  getDocs 
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// ================= FIREBASE CONFIG =================
+const firebaseConfig = {
+  apiKey: "AIzaSyDWe_8KQh5J5gzgKYDWnzNKiw-y1Vj3908",
+  authDomain: "jp-nihongo-class.firebaseapp.com",
+  projectId: "jp-nihongo-class",
+  storageBucket: "jp-nihongo-class.firebasestorage.app",
+  messagingSenderId: "102563702284",
+  appId: "1:102563702284:web:9a5166a4f7450127647029"
+};
+
+// ================= INIT =================
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ⚠️ HARUS sama persis dengan nama collection di Firestore
+const jadwalRef = collection(db, "Jadwal");
+
+// ================= URUTAN HARI =================
+const urutanHari = {
+  "Senin": 1,
+  "Selasa": 2,
+  "Rabu": 3,
+  "Kamis": 4,
+  "Jumat": 5,
+  "Sabtu": 6,
+  "Minggu": 7
+};
+
+// ================= LOAD DATA =================
+async function loadJadwal() {
+  try {
+    const snapshot = await getDocs(jadwalRef);
+    const tbody = document.getElementById("jadwalBody");
+
+    if (!tbody) return;
+
+    let dataList = [];
+
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      dataList.push(data);
+    });
+
+    // Sort berdasarkan urutan hari
+    dataList.sort((a, b) => {
+      return (urutanHari[a.hari] || 99) - (urutanHari[b.hari] || 99);
+    });
+
+    tbody.innerHTML = "";
+
+    dataList.forEach((data) => {
+      tbody.innerHTML += `
+        <tr class="border-b hover:bg-gray-50">
+          <td class="p-3">${data.hari || "-"}</td>
+          <td class="p-3">${data.jam || "-"}</td>
+          <td class="p-3">${data.level || "-"}</td>
+          <td class="p-3">${data.pengajar || "-"}</td>
+        </tr>
+      `;
+    });
+
+  } catch (error) {
+    console.error("Error load jadwal:", error);
+  }
+}
+
+loadJadwal();
+</script>
+
+
 <!-- 🔑 AUTH (LOGOUT) -->
 <script src="assets/js/auth.js"></script>
 
