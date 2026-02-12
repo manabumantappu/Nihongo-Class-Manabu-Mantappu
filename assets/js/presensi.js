@@ -1,83 +1,117 @@
-document.addEventListener("DOMContentLoaded", function () {
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  addDoc,
+  updateDoc,
+  doc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  const masuk = document.getElementById("masuk");
-  const pulang = document.getElementById("pulang");
-  const table = document.getElementById("table");
+// ================= FIREBASE CONFIG =================
+const firebaseConfig = {
+  apiKey: "AIzaSyDWe_8KQh5J5gzgKYDWnzNKiw-y1Vj3908",
+  authDomain: "jp-nihongo-class.firebaseapp.com",
+  projectId: "jp-nihongo-class",
+  storageBucket: "jp-nihongo-class.firebasestorage.app",
+  messagingSenderId: "102563702284",
+  appId: "1:102563702284:web:9a5166a4f7450127647029"
+};
 
-  if (!table) return;
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const presensiRef = collection(db, "Presensi");
 
-  let data = JSON.parse(localStorage.getItem("presensiData")) || [];
-  const email = localStorage.getItem("email") || "unknown";
+// ================= HELPERS =================
+function getToday() {
+  return new Date().toISOString().split("T")[0];
+}
 
-  function save() {
-    localStorage.setItem("presensiData", JSON.stringify(data));
+function getTime() {
+  return new Date().toTimeString().split(" ")[0];
+}
+
+function getEmail() {
+  return localStorage.getItem("email");
+}
+
+// ================= ABSEN MASUK =================
+document.getElementById("masuk").addEventListener("click", async () => {
+
+  const email = getEmail();
+  if (!email) return alert("Email tidak ditemukan");
+
+  const tanggal = getToday();
+  const waktu = getTime();
+
+  // Cek apakah sudah absen hari ini
+  const q = query(
+    presensiRef,
+    where("email", "==", email),
+    where("tanggal", "==", tanggal)
+  );
+
+  const snapshot = await getDocs(q);
+
+  if (!snapshot.empty) {
+    alert("Sudah absen masuk hari ini!");
+    return;
   }
 
-  function now() {
-    return new Date().toLocaleString("id-ID");
+  // Cek terlambat (misal lewat jam 09:00)
+  const batas = "09:00:00";
+  const status = waktu > batas ? "Terlambat" : "Hadir";
+
+  await addDoc(presensiRef, {
+    email,
+    tanggal,
+    jamMasuk: waktu,
+    jamPulang: null,
+    statusMasuk: status,
+    statusPulang: null,
+    createdAt: serverTimestamp()
+  });
+
+  alert("Absen masuk berhasil!");
+});
+
+// ================= ABSEN PULANG =================
+document.getElementById("pulang").addEventListener("click", async () => {
+
+  const email = getEmail();
+  if (!email) return alert("Email tidak ditemukan");
+
+  const tanggal = getToday();
+  const waktu = getTime();
+
+  const q = query(
+    presensiRef,
+    where("email", "==", email),
+    where("tanggal", "==", tanggal)
+  );
+
+  const snapshot = await getDocs(q);
+
+  if (snapshot.empty) {
+    alert("Belum absen masuk hari ini!");
+    return;
   }
 
-  function renderUser() {
-    table.innerHTML = "";
+  const docData = snapshot.docs[0];
+  const ref = doc(db, "Presensi", docData.id);
 
-    const userData = data.filter(d => d.email === email);
-
-    if (userData.length === 0) {
-      table.innerHTML = `
-        <tr>
-          <td colspan="3" class="p-3 text-center text-gray-500">
-            Belum ada presensi
-          </td>
-        </tr>
-      `;
-      return;
-    }
-
-    userData.forEach(d => {
-      table.innerHTML += `
-        <tr class="border-t">
-          <td class="p-2">${d.email}</td>
-          <td class="p-2">${d.waktu}</td>
-          <td class="p-2">${d.status}</td>
-        </tr>
-      `;
-    });
+  if (docData.data().jamPulang) {
+    alert("Sudah absen pulang!");
+    return;
   }
 
-  // ===== ABSEN MASUK =====
-  if (masuk) {
-    masuk.addEventListener("click", function () {
+  await updateDoc(ref, {
+    jamPulang: waktu,
+    statusPulang: "Pulang"
+  });
 
-      data.push({
-        email: email,
-        waktu: now(),
-        status: "Masuk"
-      });
-
-      save();
-      renderUser();
-
-      alert("Absen Masuk berhasil");
-    });
-  }
-
-  // ===== ABSEN PULANG =====
-  if (pulang) {
-    pulang.addEventListener("click", function () {
-
-      data.push({
-        email: email,
-        waktu: now(),
-        status: "Pulang"
-      });
-
-      save();
-      renderUser();
-
-      alert("Absen Pulang berhasil");
-    });
-  }
-
-  renderUser();
-
+  alert("Absen pulang berhasil!");
 });
