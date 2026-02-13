@@ -1,57 +1,54 @@
-import {
-  initializeApp,
-  getApps,
-  getApp
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { db } from "./firebase.js";
 
 import {
-  getFirestore,
   collection,
   addDoc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// ================= FIREBASE =================
-const firebaseConfig = {
-  // config kamu
-};
+document.addEventListener("DOMContentLoaded", () => {
 
-const app = !getApps().length
-  ? initializeApp(firebaseConfig)
-  : getApp();
+  const btnMulai = document.getElementById("btnMulaiSesi");
 
-const db = getFirestore(app);
+  btnMulai.addEventListener("click", async () => {
 
-// ================= BUTTON =================
-const btnMulai = document.getElementById("btnMulaiSesi");
+    try {
 
-btnMulai.addEventListener("click", async () => {
+      // 1️⃣ Buat sesi
+      const now = new Date();
+      const expireTime = new Date(now.getTime() + 3 * 60 * 1000);
 
-  // 1️⃣ Buat sesi
-  const now = new Date();
-  const expireTime = new Date(now.getTime() + 3 * 60 * 1000); // 3 menit
+      const docRef = await addDoc(collection(db, "sessions"), {
+        isActive: true,
+        createdAt: serverTimestamp(),
+        expiresAt: expireTime
+      });
 
-  const docRef = await addDoc(collection(db, "sessions"), {
-    isActive: true,
-    createdAt: serverTimestamp(),
-    expiresAt: expireTime
+      const sessionId = docRef.id;
+
+      // 🔥 FIX PATH GITHUB PAGES
+      const repo = window.location.pathname.split("/")[1];
+
+      const scanUrl =
+        `${window.location.origin}/${repo}/scan.html?sessionId=${sessionId}`;
+
+      // 2️⃣ Generate QR
+      const qrContainer = document.getElementById("qrcode");
+      qrContainer.innerHTML = "";
+
+      new QRCode(qrContainer, {
+        text: scanUrl,
+        width: 220,
+        height: 220
+      });
+
+      alert("Sesi berhasil dibuat ✅");
+
+    } catch (error) {
+      console.error(error);
+      alert("Terjadi error ❌");
+    }
+
   });
 
-  const sessionId = docRef.id;
-
-  // 2️⃣ Buat link scan
-  const baseUrl = window.location.origin + window.location.pathname.split("/admin")[0];
-
-  const scanUrl = `${baseUrl}/scan.html?sessionId=${sessionId}`;
-
-  // 3️⃣ Generate QR
-  document.getElementById("qrcode").innerHTML = "";
-
-  new QRCode(document.getElementById("qrcode"), {
-    text: scanUrl,
-    width: 220,
-    height: 220
-  });
-
-  alert("Sesi berhasil dibuat ✅");
 });
