@@ -64,6 +64,9 @@ document.addEventListener("DOMContentLoaded", () => {
 window.logout = function () {
   localStorage.clear();
 
-  window.location.href = "/Nihongo-Class-Manabu-Mantappu/login.html";
+  const repo = window.location.pathname.split("/")[1];
+
+  window.location.href = `/${repo}/login.html`;
 };
+
 
