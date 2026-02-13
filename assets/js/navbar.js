@@ -58,3 +58,15 @@ document.addEventListener("DOMContentLoaded", () => {
   document.body.insertAdjacentHTML("afterbegin", navbar);
 
 });
+
+
+// Tambahkan ini di luar DOMContentLoaded
+window.logout = function () {
+  localStorage.clear();
+
+  if (location.pathname.includes("/admin/")) {
+    window.location.href = "../login.html";
+  } else {
+    window.location.href = "login.html";
+  }
+};
