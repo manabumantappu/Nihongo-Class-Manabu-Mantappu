@@ -1,44 +1,50 @@
-import {
-  initializeApp,
-  getApps,
-  getApp
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { db } from "./firebase.js";
 
 import {
-  getFirestore,
   collection,
   addDoc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  // config kamu
-};
+document.addEventListener("DOMContentLoaded", () => {
 
-const app = !getApps().length
-  ? initializeApp(firebaseConfig)
-  : getApp();
+  const btn = document.getElementById("btnHadir");
+  const status = document.getElementById("status");
 
-const db = getFirestore(app);
-
-// ambil sessionId dari URL
-const urlParams = new URLSearchParams(window.location.search);
-const sessionId = urlParams.get("sessionId");
-
-document.getElementById("btnHadir").addEventListener("click", async () => {
-
-  const nama = localStorage.getItem("nama");
+  const urlParams = new URLSearchParams(window.location.search);
+  const sessionId = urlParams.get("sessionId");
 
   if (!sessionId) {
-    alert("Sesi tidak valid");
+    status.innerText = "Session tidak valid ❌";
     return;
   }
 
-  await addDoc(collection(db, "presensi"), {
-    sessionId,
-    nama,
-    waktu: serverTimestamp()
+  btn.addEventListener("click", async () => {
+
+    try {
+
+      const nama = localStorage.getItem("nama");
+
+      if (!nama) {
+        status.innerText = "Silakan login dulu ❌";
+        return;
+      }
+
+      await addDoc(collection(db, "presensi"), {
+        sessionId,
+        nama,
+        waktu: serverTimestamp()
+      });
+
+      status.innerText = "Presensi berhasil ✅";
+      btn.disabled = true;
+      btn.classList.add("opacity-50");
+
+    } catch (error) {
+      console.error(error);
+      status.innerText = "Terjadi error ❌";
+    }
+
   });
 
-  alert("Presensi berhasil ✅");
 });
