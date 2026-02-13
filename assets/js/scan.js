@@ -1,15 +1,24 @@
 import {
+  initializeApp,
+  getApps,
+  getApp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+import {
   getFirestore,
   collection,
   addDoc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+const firebaseConfig = {
+  // config kamu
+};
 
-const firebaseConfig = { /* config kamu */ };
+const app = !getApps().length
+  ? initializeApp(firebaseConfig)
+  : getApp();
 
-const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // ambil sessionId dari URL
@@ -18,7 +27,7 @@ const sessionId = urlParams.get("sessionId");
 
 document.getElementById("btnHadir").addEventListener("click", async () => {
 
-  const namaSiswa = localStorage.getItem("nama");
+  const nama = localStorage.getItem("nama");
 
   if (!sessionId) {
     alert("Sesi tidak valid");
@@ -26,8 +35,8 @@ document.getElementById("btnHadir").addEventListener("click", async () => {
   }
 
   await addDoc(collection(db, "presensi"), {
-    sessionId: sessionId,
-    nama: namaSiswa,
+    sessionId,
+    nama,
     waktu: serverTimestamp()
   });
 
