@@ -14,8 +14,7 @@
 <script src="../assets/js/navbar.js"></script>
 
 <div class="max-w-6xl mx-auto p-6 mt-6">
-<div id="qrcode" class="mt-6"></div>
-  
+
   <h1 class="text-2xl font-semibold mb-6">QR Presensi Kelas</h1>
 
   <!-- STATUS -->
@@ -31,17 +30,11 @@
         </p>
       </div>
 
-      <div class="space-x-2">
-        <button onclick="startSession()"
-          class="bg-green-600 text-white px-4 py-2 rounded">
-          Mulai Sesi
-        </button>
+      <button id="btnMulaiSesi"
+        class="bg-green-600 text-white px-4 py-2 rounded">
+        Mulai Sesi
+      </button>
 
-        <button onclick="stopSession()"
-          class="bg-red-600 text-white px-4 py-2 rounded">
-          Stop Sesi
-        </button>
-      </div>
     </div>
   </div>
 
@@ -57,7 +50,6 @@
       <thead class="bg-gray-100">
         <tr>
           <th class="p-3 text-left">Nama</th>
-          <th class="p-3">Email</th>
           <th class="p-3">Jam</th>
         </tr>
       </thead>
@@ -66,10 +58,8 @@
   </div>
 
 </div>
-  
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script type="module" src="../assets/js/admin-qr.js"></script>
-<script type="module" src="../assets/js/auth.js"></script>
+
+<script type="module" src="../assets/js/qr-presensi.js"></script>
 
 </body>
 </html>
