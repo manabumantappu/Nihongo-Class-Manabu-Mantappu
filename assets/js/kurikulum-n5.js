@@ -3,18 +3,45 @@ import {
   collection,
   addDoc,
   getDocs,
-  doc,
-  deleteDoc,
-  updateDoc,
   query,
   orderBy
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // ==========================
 // ELEMENT
 // ==========================
 const moduleList = document.getElementById("moduleList");
-const addModuleBtn = document.getElementById("addModuleBtn");
+const uploadTemplateBtn = document.getElementById("uploadTemplateBtn");
+
+// ==========================
+// TEMPLATE N5 (24 MODULE)
+// ==========================
+const templateN5 = [
+  { namaModule: "Hiragana", deskripsi: "46 huruf dasar hiragana + dakuten", target: "Bisa membaca & menulis hiragana" },
+  { namaModule: "Katakana", deskripsi: "46 huruf katakana + kombinasi", target: "Bisa membaca kata serapan" },
+  { namaModule: "Perkenalan Diri", deskripsi: "Aisatsu & jikoshoukai", target: "Bisa memperkenalkan diri" },
+  { namaModule: "Angka & Waktu", deskripsi: "Bilangan, jam, hari", target: "Bisa membaca angka dan waktu" },
+  { namaModule: "Partikel は・が・を", deskripsi: "Penggunaan dasar partikel", target: "Menyusun kalimat sederhana" },
+  { namaModule: "Kata Kerja Bentuk Masu", deskripsi: "Present positif & negatif", target: "Bisa menyatakan aktivitas" },
+  { namaModule: "Kata Sifat い & な", deskripsi: "Deskripsi benda & orang", target: "Bisa membuat kalimat deskriptif" },
+  { namaModule: "Demonstratif これ/それ/あれ", deskripsi: "Menunjuk benda", target: "Bisa menunjuk objek dengan benar" },
+  { namaModule: "Kepemilikan の", deskripsi: "Struktur kepemilikan", target: "Menyatakan kepunyaan" },
+  { namaModule: "Lokasi に・で", deskripsi: "Tempat & aktivitas", target: "Menyatakan lokasi kegiatan" },
+  { namaModule: "Ada/Tidak Ada あります・います", deskripsi: "Benda & makhluk hidup", target: "Menyatakan keberadaan" },
+  { namaModule: "Kalimat Lampau", deskripsi: "Bentuk past tense", target: "Menyatakan kejadian masa lalu" },
+  { namaModule: "Ajakan & Permintaan", deskripsi: "〜ましょう, 〜てください", target: "Membuat ajakan & permintaan" },
+  { namaModule: "Bentuk Te", deskripsi: "Penggabungan kalimat", target: "Menghubungkan aktivitas" },
+  { namaModule: "Kata Kerja Potensial", deskripsi: "Bisa melakukan sesuatu", target: "Menyatakan kemampuan" },
+  { namaModule: "Larangan & Keharusan", deskripsi: "〜てはいけません", target: "Menyatakan aturan" },
+  { namaModule: "Frekuensi", deskripsi: "Sering, kadang, jarang", target: "Menyatakan kebiasaan" },
+  { namaModule: "Transportasi & Arah", deskripsi: "Pergi & arah", target: "Menjelaskan perjalanan" },
+  { namaModule: "Belanja & Harga", deskripsi: "Ekspresi transaksi", target: "Berbelanja dalam bahasa Jepang" },
+  { namaModule: "Keluarga & Profesi", deskripsi: "Kosakata keluarga & pekerjaan", target: "Menyebutkan anggota keluarga" },
+  { namaModule: "Hobi & Kegiatan", deskripsi: "Aktivitas sehari-hari", target: "Menyatakan hobi" },
+  { namaModule: "Cuaca & Musim", deskripsi: "Ekspresi cuaca", target: "Mendeskripsikan cuaca" },
+  { namaModule: "Review Grammar N5", deskripsi: "Latihan keseluruhan", target: "Siap simulasi ujian" },
+  { namaModule: "Simulasi Ujian N5", deskripsi: "Latihan soal lengkap", target: "Siap mengikuti JLPT N5" }
+];
 
 // ==========================
 // LOAD MODULE
@@ -35,98 +62,29 @@ async function loadModules() {
     moduleList.innerHTML += `
       <div class="bg-white p-5 rounded shadow">
         <h3 class="text-lg font-bold">${data.namaModule}</h3>
-        <p class="text-sm text-gray-600 mt-2">${data.deskripsi || ""}</p>
-        <p class="text-xs text-gray-400 mt-2">
-          Target: ${data.target || "-"}
-        </p>
-
-        <div class="flex gap-2 mt-4">
-          <button data-id="${d.id}"
-            class="editBtn bg-yellow-500 text-white px-3 py-1 rounded text-sm">
-            Edit
-          </button>
-
-          <button data-id="${d.id}"
-            class="deleteBtn bg-red-500 text-white px-3 py-1 rounded text-sm">
-            Hapus
-          </button>
-        </div>
+        <p class="text-sm text-gray-600 mt-2">${data.deskripsi}</p>
+        <p class="text-xs text-gray-400 mt-2">Target: ${data.target}</p>
       </div>
     `;
   });
-
-  attachEvents();
 }
 
 loadModules();
 
 // ==========================
-// TAMBAH MODULE
+// UPLOAD TEMPLATE N5
 // ==========================
-addModuleBtn.addEventListener("click", async () => {
+uploadTemplateBtn.addEventListener("click", async () => {
 
-  const namaModule = prompt("Nama Modul:");
-  if (!namaModule) return;
+  if (!confirm("Upload seluruh template N5?")) return;
 
-  const deskripsi = prompt("Deskripsi Modul:");
-  const target = prompt("Target Modul:");
+  for (const module of templateN5) {
+    await addDoc(collection(db, "kurikulum", "N5", "modules"), {
+      ...module,
+      createdAt: new Date()
+    });
+  }
 
-  await addDoc(collection(db, "kurikulum", "N5", "modules"), {
-    namaModule,
-    deskripsi,
-    target,
-    createdAt: new Date()
-  });
-
-  alert("Modul berhasil ditambahkan");
+  alert("Template N5 berhasil diupload!");
   loadModules();
 });
-
-// ==========================
-// EDIT & DELETE
-// ==========================
-function attachEvents() {
-
-  // DELETE
-  document.querySelectorAll(".deleteBtn").forEach(btn => {
-    btn.addEventListener("click", async () => {
-
-      const id = btn.dataset.id;
-
-      if (!confirm("Yakin hapus modul ini?")) return;
-
-      await deleteDoc(
-        doc(db, "kurikulum", "N5", "modules", id)
-      );
-
-      loadModules();
-    });
-  });
-
-  // EDIT
-  document.querySelectorAll(".editBtn").forEach(btn => {
-    btn.addEventListener("click", async () => {
-
-      const id = btn.dataset.id;
-
-      const namaModule = prompt("Nama baru:");
-      if (!namaModule) return;
-
-      const deskripsi = prompt("Deskripsi baru:");
-      const target = prompt("Target baru:");
-
-      await updateDoc(
-        doc(db, "kurikulum", "N5", "modules", id),
-        {
-          namaModule,
-          deskripsi,
-          target,
-          updatedAt: new Date()
-        }
-      );
-
-      loadModules();
-    });
-  });
-
-}
