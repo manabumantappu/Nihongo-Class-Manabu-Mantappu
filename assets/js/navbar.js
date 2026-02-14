@@ -64,9 +64,17 @@ document.addEventListener("DOMContentLoaded", () => {
 window.logout = function () {
   localStorage.clear();
 
-  const repo = window.location.pathname.split("/")[1];
+  const pathParts = window.location.pathname.split("/");
 
-  window.location.href = `/${repo}/login.html`;
+  // Jika pakai GitHub Pages (ada nama repo)
+  if (pathParts.length > 2) {
+    const repo = pathParts[1];
+    window.location.href = `/${repo}/login.html`;
+  } else {
+    // Jika local / root
+    window.location.href = "/login.html";
+  }
 };
+
 
 
