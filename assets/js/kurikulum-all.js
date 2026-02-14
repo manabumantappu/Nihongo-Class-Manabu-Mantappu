@@ -196,7 +196,7 @@ window.deleteMaterial = async (level, catId, id) => {
   );
   loadMaterials(level, catId);
 };
-import { db } from "./firebase.js";
+
 import {
   collection,
   addDoc,
