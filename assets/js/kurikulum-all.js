@@ -4,7 +4,8 @@ import {
   addDoc,
   getDocs,
   deleteDoc,
-  doc
+  doc,
+  setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -54,10 +55,28 @@ function renderLevel(container, level, data) {
     </div>
   `;
 
+  ensureLevelDocument(level);
   loadCategories(level);
 }
 
+// ===============================
+// ENSURE LEVEL DOCUMENT EXISTS
+// ===============================
+
+async function ensureLevelDocument(level) {
+  await setDoc(
+    doc(db, "kurikulum", level),
+    { level: level },
+    { merge: true }
+  );
+}
+
+// ===============================
+// CATEGORY
+// ===============================
+
 window.addCategory = async (level) => {
+
   const nama = prompt("Nama kategori (Kanji / Grammar / Kaiwa / dll)");
   if (!nama) return;
 
@@ -133,6 +152,10 @@ window.deleteCategory = async (level, id) => {
   await deleteDoc(doc(db, "kurikulum", level, "categories", id));
   loadCategories(level);
 };
+
+// ===============================
+// MATERIAL
+// ===============================
 
 window.toggleForm = (level, catId) => {
   const el = document.getElementById(`form-${catId}`);
