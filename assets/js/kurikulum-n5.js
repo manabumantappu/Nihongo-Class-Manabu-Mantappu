@@ -1,25 +1,33 @@
-import { db } from "./firebase-config.js";
+import { db } from "./firebase.js";
 import {
   collection,
   addDoc,
   getDocs,
   doc,
   deleteDoc,
-  updateDoc
+  updateDoc,
+  query,
+  orderBy
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+// ==========================
+// ELEMENT
+// ==========================
 const moduleList = document.getElementById("moduleList");
 const addModuleBtn = document.getElementById("addModuleBtn");
 
 // ==========================
-// LOAD MODULES
+// LOAD MODULE
 // ==========================
 async function loadModules() {
   moduleList.innerHTML = "";
 
-  const snapshot = await getDocs(
-    collection(db, "kurikulum", "N5", "modules")
+  const q = query(
+    collection(db, "kurikulum", "N5", "modules"),
+    orderBy("createdAt", "asc")
   );
+
+  const snapshot = await getDocs(q);
 
   snapshot.forEach((d) => {
     const data = d.data();
@@ -28,13 +36,18 @@ async function loadModules() {
       <div class="bg-white p-5 rounded shadow">
         <h3 class="text-lg font-bold">${data.namaModule}</h3>
         <p class="text-sm text-gray-600 mt-2">${data.deskripsi || ""}</p>
-        <p class="text-xs text-gray-400 mt-2">Target: ${data.target || "-"}</p>
+        <p class="text-xs text-gray-400 mt-2">
+          Target: ${data.target || "-"}
+        </p>
 
         <div class="flex gap-2 mt-4">
-          <button data-id="${d.id}" class="editBtn bg-yellow-500 text-white px-3 py-1 rounded text-sm">
+          <button data-id="${d.id}"
+            class="editBtn bg-yellow-500 text-white px-3 py-1 rounded text-sm">
             Edit
           </button>
-          <button data-id="${d.id}" class="deleteBtn bg-red-500 text-white px-3 py-1 rounded text-sm">
+
+          <button data-id="${d.id}"
+            class="deleteBtn bg-red-500 text-white px-3 py-1 rounded text-sm">
             Hapus
           </button>
         </div>
@@ -70,18 +83,22 @@ addModuleBtn.addEventListener("click", async () => {
 });
 
 // ==========================
-// EVENT EDIT & DELETE
+// EDIT & DELETE
 // ==========================
 function attachEvents() {
 
   // DELETE
   document.querySelectorAll(".deleteBtn").forEach(btn => {
     btn.addEventListener("click", async () => {
+
       const id = btn.dataset.id;
 
       if (!confirm("Yakin hapus modul ini?")) return;
 
-      await deleteDoc(doc(db, "kurikulum", "N5", "modules", id));
+      await deleteDoc(
+        doc(db, "kurikulum", "N5", "modules", id)
+      );
+
       loadModules();
     });
   });
@@ -89,6 +106,7 @@ function attachEvents() {
   // EDIT
   document.querySelectorAll(".editBtn").forEach(btn => {
     btn.addEventListener("click", async () => {
+
       const id = btn.dataset.id;
 
       const namaModule = prompt("Nama baru:");
