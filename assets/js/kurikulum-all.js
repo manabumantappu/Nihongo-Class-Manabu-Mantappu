@@ -7,26 +7,31 @@ import {
   doc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const container = document.getElementById("kurikulumContainer");
+document.addEventListener("DOMContentLoaded", () => {
+  init();
+});
 
-const programs = {
-  N5: { durasi: "4 Bulan", deskripsi: "Minna no Nihongo I" },
-  N4: { durasi: "5–6 Bulan", deskripsi: "Minna no Nihongo II" },
-  N3: { durasi: "6–8 Bulan", deskripsi: "Intermediate" },
-  N2: { durasi: "8–12 Bulan", deskripsi: "Business Japanese" },
-  N1: { durasi: "12–18 Bulan", deskripsi: "Advanced" }
-};
+function init() {
+  const container = document.getElementById("kurikulumContainer");
+  if (!container) return;
 
-for (const level in programs) {
-  renderLevel(level);
+  const programs = {
+    N5: { durasi: "4 Bulan", deskripsi: "Minna no Nihongo I" },
+    N4: { durasi: "5–6 Bulan", deskripsi: "Minna no Nihongo II" },
+    N3: { durasi: "6–8 Bulan", deskripsi: "Intermediate" },
+    N2: { durasi: "8–12 Bulan", deskripsi: "Business Japanese" },
+    N1: { durasi: "12–18 Bulan", deskripsi: "Advanced" }
+  };
+
+  Object.keys(programs).forEach(level => {
+    renderLevel(container, level, programs[level]);
+  });
 }
 
-function renderLevel(level) {
-
-  const data = programs[level];
+function renderLevel(container, level, data) {
 
   container.innerHTML += `
-    <div class="bg-white p-6 rounded-xl shadow space-y-4">
+    <div class="bg-white p-6 rounded-xl shadow space-y-4 mb-6">
 
       <h2 class="text-2xl font-bold">${level}</h2>
 
@@ -52,12 +57,7 @@ function renderLevel(level) {
   loadCategories(level);
 }
 
-// =============================
-// CATEGORY
-// =============================
-
 window.addCategory = async (level) => {
-
   const nama = prompt("Nama kategori (Kanji / Grammar / Kaiwa / dll)");
   if (!nama) return;
 
@@ -74,18 +74,20 @@ window.addCategory = async (level) => {
 
 async function loadCategories(level) {
 
-  const containerCat = document.getElementById(`categories-${level}`);
-  containerCat.innerHTML = "";
+  const container = document.getElementById(`categories-${level}`);
+  if (!container) return;
+
+  container.innerHTML = "";
 
   const snapshot = await getDocs(
     collection(db, "kurikulum", level, "categories")
   );
 
-  snapshot.forEach((docSnap) => {
+  snapshot.forEach(docSnap => {
 
     const data = docSnap.data();
 
-    containerCat.innerHTML += `
+    container.innerHTML += `
       <div class="bg-gray-100 p-4 rounded">
 
         <div class="flex justify-between items-center">
@@ -132,21 +134,25 @@ window.deleteCategory = async (level, id) => {
   loadCategories(level);
 };
 
-// =============================
-// MATERIAL
-// =============================
-
 window.toggleForm = (level, catId) => {
-  document.getElementById(`form-${catId}`)
-    .classList.toggle("hidden");
+  const el = document.getElementById(`form-${catId}`);
+  if (el) el.classList.toggle("hidden");
 };
 
 window.saveMaterial = async (level, catId) => {
 
-  const title = document.getElementById(`title-${catId}`).value;
-  const url = document.getElementById(`url-${catId}`).value;
+  const titleInput = document.getElementById(`title-${catId}`);
+  const urlInput = document.getElementById(`url-${catId}`);
 
-  if (!title || !url) return alert("Isi semua field");
+  if (!titleInput || !urlInput) return;
+
+  const title = titleInput.value.trim();
+  const url = urlInput.value.trim();
+
+  if (!title || !url) {
+    alert("Isi semua field");
+    return;
+  }
 
   await addDoc(
     collection(db, "kurikulum", level, "categories", catId, "materials"),
@@ -156,6 +162,9 @@ window.saveMaterial = async (level, catId) => {
       createdAt: new Date()
     }
   );
+
+  titleInput.value = "";
+  urlInput.value = "";
 
   loadMaterials(level, catId);
 };
@@ -171,7 +180,7 @@ async function loadMaterials(level, catId) {
     collection(db, "kurikulum", level, "categories", catId, "materials")
   );
 
-  snapshot.forEach((docSnap) => {
+  snapshot.forEach(docSnap => {
 
     const data = docSnap.data();
 
@@ -195,135 +204,4 @@ window.deleteMaterial = async (level, catId, id) => {
     doc(db, "kurikulum", level, "categories", catId, "materials", id)
   );
   loadMaterials(level, catId);
-};
-
-import {
-  collection,
-  addDoc,
-  getDocs,
-  deleteDoc,
-  doc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-const container = document.getElementById("kurikulumContainer");
-
-const programs = {
-  N5: { durasi: "4 Bulan", deskripsi: "Minna no Nihongo I" },
-  N4: { durasi: "5–6 Bulan", deskripsi: "Minna no Nihongo II" },
-  N3: { durasi: "6–8 Bulan", deskripsi: "Intermediate" },
-  N2: { durasi: "8–12 Bulan", deskripsi: "Business Japanese" },
-  N1: { durasi: "12–18 Bulan", deskripsi: "Advanced" }
-};
-
-for (const level in programs) {
-  renderLevel(level);
-}
-
-function renderLevel(level) {
-
-  const data = programs[level];
-
-  container.innerHTML += `
-    <div class="bg-white p-6 rounded-xl shadow space-y-4">
-
-      <h2 class="text-2xl font-bold">${level}</h2>
-
-      <p class="text-sm text-gray-500">
-        <strong>Durasi:</strong> ${data.durasi}
-      </p>
-
-      <p class="text-gray-600 text-sm">
-        ${data.deskripsi}
-      </p>
-
-      <button 
-        onclick="toggleForm('${level}')"
-        class="bg-blue-600 text-white px-4 py-2 rounded">
-        Tambah Materi (Link)
-      </button>
-
-      <div id="form-${level}" class="hidden mt-4">
-        <input type="text" id="title-${level}"
-          placeholder="Judul Materi"
-          class="border p-2 rounded w-full mb-2">
-
-        <input type="text" id="url-${level}"
-          placeholder="Link PDF / Video"
-          class="border p-2 rounded w-full mb-2">
-
-        <button 
-          onclick="saveMaterial('${level}')"
-          class="bg-green-600 text-white px-4 py-2 rounded">
-          Simpan
-        </button>
-
-        <div id="list-${level}" class="mt-4 space-y-2"></div>
-      </div>
-
-    </div>
-  `;
-
-  loadMaterials(level);
-}
-
-window.toggleForm = (level) => {
-  document.getElementById(`form-${level}`).classList.toggle("hidden");
-};
-
-window.saveMaterial = async (level) => {
-
-  const title = document.getElementById(`title-${level}`).value;
-  const url = document.getElementById(`url-${level}`).value;
-
-  if (!title || !url) return alert("Isi semua field");
-
-  await addDoc(
-    collection(db, "kurikulum", level, "materials"),
-    {
-      title,
-      url,
-      createdAt: new Date()
-    }
-  );
-
-  loadMaterials(level);
-};
-
-async function loadMaterials(level) {
-
-  const list = document.getElementById(`list-${level}`);
-  if (!list) return;
-
-  list.innerHTML = "";
-
-  const snapshot = await getDocs(
-    collection(db, "kurikulum", level, "materials")
-  );
-
-  snapshot.forEach((d) => {
-
-    const data = d.data();
-
-    list.innerHTML += `
-      <div class="flex justify-between bg-gray-100 p-2 rounded">
-        <a href="${data.url}" target="_blank" class="text-blue-600 underline">
-          ${data.title}
-        </a>
-
-        <button onclick="deleteMaterial('${level}','${d.id}')"
-          class="bg-red-500 text-white px-2 py-1 rounded text-sm">
-          Hapus
-        </button>
-      </div>
-    `;
-  });
-}
-
-window.deleteMaterial = async (level, id) => {
-
-  await deleteDoc(
-    doc(db, "kurikulum", level, "materials", id)
-  );
-
-  loadMaterials(level);
 };
