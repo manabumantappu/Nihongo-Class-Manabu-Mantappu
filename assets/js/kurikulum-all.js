@@ -17,13 +17,24 @@ async function init() {
   const container = document.getElementById("kurikulumContainer");
   if (!container) return;
 
-  const programs = {
-    N5: { durasi: "4 Bulan", deskripsi: "Minna no Nihongo I" },
-    N4: { durasi: "5–6 Bulan", deskripsi: "Minna no Nihongo II" },
-    N3: { durasi: "6–8 Bulan", deskripsi: "Intermediate" },
-    N2: { durasi: "8–12 Bulan", deskripsi: "Business Japanese" },
-    N1: { durasi: "12–18 Bulan", deskripsi: "Advanced" }
-  };
+ const programs = {
+  N5: { durasi: "4 Bulan", deskripsi: "Minna no Nihongo I" },
+  N4: { durasi: "5–6 Bulan", deskripsi: "Minna no Nihongo II" },
+  N3: { durasi: "6–8 Bulan", deskripsi: "Intermediate" },
+  N2: { durasi: "8–12 Bulan", deskripsi: "Business Japanese" },
+  N1: { durasi: "12–18 Bulan", deskripsi: "Advanced" },
+
+  JFT_A2: {
+    durasi: "3–4 Bulan",
+    deskripsi: "JFT Basic A2 – Komunikasi kerja & kehidupan di Jepang"
+  },
+
+  SSW: {
+    durasi: "3–6 Bulan",
+    deskripsi: "Tokutei Ginou (Specified Skilled Worker) Preparation"
+  }
+};
+
 
   container.innerHTML = "";
 
