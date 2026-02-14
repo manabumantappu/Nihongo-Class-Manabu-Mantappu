@@ -32,48 +32,36 @@ async function init() {
   for (const level of Object.keys(programs)) {
     await renderLevel(container, level, programs[level]);
   }
-
-  // Delay kecil supaya DOM benar-benar siap
-  setTimeout(async () => {
-    for (const level of Object.keys(programs)) {
-      await loadCategories(level);
-    }
-  }, 100);
 }
 
 async function renderLevel(container, level, data) {
 
   container.innerHTML += `
-    <div class="bg-white rounded-2xl shadow-md p-6 mb-8 border border-gray-100">
+    <div class="bg-white rounded-2xl shadow-lg p-8 mb-10 border border-gray-100">
 
-      <div class="flex justify-between items-center mb-4">
-        <div>
-          <h2 class="text-2xl font-bold text-gray-800">${level}</h2>
-          <p class="text-sm text-gray-500 mt-1">
-            Durasi: ${data.durasi}
-          </p>
-          <p class="text-sm text-gray-600">
-            ${data.deskripsi}
-          </p>
-        </div>
+      <div class="mb-6">
+        <h2 class="text-3xl font-bold text-gray-800">${level}</h2>
+        <p class="text-sm text-gray-500 mt-1">
+          Durasi: ${data.durasi}
+        </p>
+        <p class="text-gray-600 mt-1 text-sm">
+          ${data.deskripsi}
+        </p>
       </div>
 
-      <button 
-        onclick="addCategory('${level}')"
-        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm transition">
+      <button onclick="addCategory('${level}')"
+        class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg text-sm transition">
         + Tambah Kategori
       </button>
 
-      <div id="categories-${level}" class="mt-6 space-y-5"></div>
+      <div id="categories-${level}" class="mt-8 space-y-6"></div>
 
     </div>
   `;
 
-  await setDoc(
-    doc(db, "kurikulum", level),
-    { level },
-    { merge: true }
-  );
+  await setDoc(doc(db, "kurikulum", level), { level }, { merge: true });
+
+  await loadCategories(level);
 }
 
 window.addCategory = async (level) => {
@@ -83,10 +71,7 @@ window.addCategory = async (level) => {
 
   await addDoc(
     collection(db, "kurikulum", level, "categories"),
-    {
-      nama,
-      createdAt: new Date()
-    }
+    { nama, createdAt: new Date() }
   );
 
   await loadCategories(level);
@@ -103,53 +88,50 @@ async function loadCategories(level) {
     collection(db, "kurikulum", level, "categories")
   );
 
-  snapshot.forEach(docSnap => {
+  for (const docSnap of snapshot.docs) {
 
     const data = docSnap.data();
+    const catId = docSnap.id;
 
     container.innerHTML += `
-      <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
+      <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
 
-        <div class="flex justify-between items-center">
-          <h3 class="font-semibold text-gray-800 text-lg">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-gray-800">
             📁 ${data.nama}
           </h3>
-          <button onclick="deleteCategory('${level}','${docSnap.id}')"
-            class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs transition">
+          <button onclick="deleteCategory('${level}','${catId}')"
+            class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs">
             Hapus
           </button>
         </div>
 
-        <button 
-          onclick="toggleForm('${level}','${docSnap.id}')"
-          class="mt-3 bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition">
-          + Tambah Materi
-        </button>
+        <!-- FORM -->
+        <div class="bg-white p-4 rounded-lg border border-gray-200 mb-4">
 
-        <div id="form-${docSnap.id}" class="hidden mt-4">
-
-          <input type="text" id="title-${docSnap.id}"
+          <input type="text" id="title-${catId}"
             placeholder="Judul Materi"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-2 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-3 focus:ring-2 focus:ring-indigo-400">
 
-          <input type="text" id="url-${docSnap.id}"
+          <input type="text" id="url-${catId}"
             placeholder="Link PDF / Video"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-3 focus:ring-2 focus:ring-indigo-400">
 
-          <button 
-            onclick="saveMaterial('${level}','${docSnap.id}')"
-            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm transition">
+          <button onclick="saveMaterial('${level}','${catId}')"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm">
             Simpan
           </button>
 
-          <div id="list-${docSnap.id}" class="mt-4 space-y-3"></div>
         </div>
+
+        <!-- MATERIAL LIST -->
+        <div id="list-${catId}" class="space-y-3"></div>
 
       </div>
     `;
 
-    loadMaterials(level, docSnap.id);
-  });
+    await loadMaterials(level, catId);
+  }
 }
 
 window.deleteCategory = async (level, id) => {
@@ -157,18 +139,10 @@ window.deleteCategory = async (level, id) => {
   await loadCategories(level);
 };
 
-window.toggleForm = (level, catId) => {
-  const el = document.getElementById(`form-${catId}`);
-  if (el) el.classList.toggle("hidden");
-};
-
 window.saveMaterial = async (level, catId) => {
 
-  const titleInput = document.getElementById(`title-${catId}`);
-  const urlInput = document.getElementById(`url-${catId}`);
-
-  const title = titleInput.value.trim();
-  const url = urlInput.value.trim();
+  const title = document.getElementById(`title-${catId}`).value.trim();
+  const url = document.getElementById(`url-${catId}`).value.trim();
 
   if (!title || !url) {
     alert("Isi semua field");
@@ -177,15 +151,11 @@ window.saveMaterial = async (level, catId) => {
 
   await addDoc(
     collection(db, "kurikulum", level, "categories", catId, "materials"),
-    {
-      title,
-      url,
-      createdAt: new Date()
-    }
+    { title, url, createdAt: new Date() }
   );
 
-  titleInput.value = "";
-  urlInput.value = "";
+  document.getElementById(`title-${catId}`).value = "";
+  document.getElementById(`url-${catId}`).value = "";
 
   await loadMaterials(level, catId);
 };
@@ -201,21 +171,32 @@ async function loadMaterials(level, catId) {
     collection(db, "kurikulum", level, "categories", catId, "materials")
   );
 
+  if (snapshot.empty) {
+    list.innerHTML = `
+      <p class="text-gray-400 text-sm italic">
+        Belum ada materi
+      </p>
+    `;
+    return;
+  }
+
   snapshot.forEach(docSnap => {
 
     const data = docSnap.data();
 
     list.innerHTML += `
-      <div class="flex justify-between items-center bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
+      <div class="flex justify-between items-center bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+
         <a href="${data.url}" target="_blank"
-          class="text-indigo-600 hover:underline text-sm font-medium">
+          class="text-indigo-600 font-medium hover:underline text-sm">
           ${data.title}
         </a>
 
         <button onclick="deleteMaterial('${level}','${catId}','${docSnap.id}')"
-          class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs transition">
+          class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs">
           Hapus
         </button>
+
       </div>
     `;
   });
