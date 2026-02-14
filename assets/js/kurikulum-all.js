@@ -1,4 +1,4 @@
-import { db, storage } from "./firebase.js";
+import { db } from "./firebase.js";
 import {
   collection,
   addDoc,
@@ -7,45 +7,15 @@ import {
   doc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-  deleteObject
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
-
 const container = document.getElementById("kurikulumContainer");
 
-// =========================
-// PROGRAM DATA
-// =========================
-
 const programs = {
-  N5: {
-    durasi: "4 Bulan",
-    deskripsi: "Minna no Nihongo I. Hiragana, Katakana, Grammar dasar."
-  },
-  N4: {
-    durasi: "5–6 Bulan",
-    deskripsi: "Minna no Nihongo II. Grammar lanjutan."
-  },
-  N3: {
-    durasi: "6–8 Bulan",
-    deskripsi: "Intermediate grammar dan reading."
-  },
-  N2: {
-    durasi: "8–12 Bulan",
-    deskripsi: "Bahasa bisnis dan artikel berita."
-  },
-  N1: {
-    durasi: "12–18 Bulan",
-    deskripsi: "Level profesional & akademik."
-  }
+  N5: { durasi: "4 Bulan", deskripsi: "Minna no Nihongo I" },
+  N4: { durasi: "5–6 Bulan", deskripsi: "Minna no Nihongo II" },
+  N3: { durasi: "6–8 Bulan", deskripsi: "Intermediate" },
+  N2: { durasi: "8–12 Bulan", deskripsi: "Business Japanese" },
+  N1: { durasi: "12–18 Bulan", deskripsi: "Advanced" }
 };
-
-// =========================
-// RENDER CARD
-// =========================
 
 for (const level in programs) {
   renderLevel(level);
@@ -69,20 +39,22 @@ function renderLevel(level) {
       </p>
 
       <button 
-        onclick="toggleUpload('${level}')"
+        onclick="toggleForm('${level}')"
         class="bg-blue-600 text-white px-4 py-2 rounded">
-        Upload PDF / Video
+        Tambah Materi (Link)
       </button>
 
-      <div id="upload-${level}" class="hidden mt-4">
+      <div id="form-${level}" class="hidden mt-4">
         <input type="text" id="title-${level}"
           placeholder="Judul Materi"
           class="border p-2 rounded w-full mb-2">
 
-        <input type="file" id="file-${level}" class="mb-2">
+        <input type="text" id="url-${level}"
+          placeholder="Link PDF / Video"
+          class="border p-2 rounded w-full mb-2">
 
         <button 
-          onclick="uploadMaterial('${level}')"
+          onclick="saveMaterial('${level}')"
           class="bg-green-600 text-white px-4 py-2 rounded">
           Simpan
         </button>
@@ -96,52 +68,28 @@ function renderLevel(level) {
   loadMaterials(level);
 }
 
-// =========================
-// TOGGLE FORM
-// =========================
-
-window.toggleUpload = (level) => {
-  document.getElementById(`upload-${level}`)
-    .classList.toggle("hidden");
+window.toggleForm = (level) => {
+  document.getElementById(`form-${level}`).classList.toggle("hidden");
 };
 
-// =========================
-// UPLOAD FILE
-// =========================
+window.saveMaterial = async (level) => {
 
-window.uploadMaterial = async (level) => {
-
-  const file = document.getElementById(`file-${level}`).files[0];
   const title = document.getElementById(`title-${level}`).value;
+  const url = document.getElementById(`url-${level}`).value;
 
-  if (!file) return alert("Pilih file dulu");
-
-  const storageRef = ref(
-    storage,
-    `kurikulum/${level}/${file.name}`
-  );
-
-  await uploadBytes(storageRef, file);
-
-  const url = await getDownloadURL(storageRef);
+  if (!title || !url) return alert("Isi semua field");
 
   await addDoc(
     collection(db, "kurikulum", level, "materials"),
     {
       title,
-      fileURL: url,
-      filePath: storageRef.fullPath,
+      url,
       createdAt: new Date()
     }
   );
 
-  alert("Upload berhasil!");
   loadMaterials(level);
 };
-
-// =========================
-// LOAD FILE LIST
-// =========================
 
 async function loadMaterials(level) {
 
@@ -160,11 +108,11 @@ async function loadMaterials(level) {
 
     list.innerHTML += `
       <div class="flex justify-between bg-gray-100 p-2 rounded">
-        <a href="${data.fileURL}" target="_blank" class="text-blue-600 underline">
+        <a href="${data.url}" target="_blank" class="text-blue-600 underline">
           ${data.title}
         </a>
 
-        <button onclick="deleteMaterial('${level}','${d.id}','${data.filePath}')"
+        <button onclick="deleteMaterial('${level}','${d.id}')"
           class="bg-red-500 text-white px-2 py-1 rounded text-sm">
           Hapus
         </button>
@@ -173,18 +121,11 @@ async function loadMaterials(level) {
   });
 }
 
-// =========================
-// DELETE FILE
-// =========================
-
-window.deleteMaterial = async (level, id, filePath) => {
+window.deleteMaterial = async (level, id) => {
 
   await deleteDoc(
     doc(db, "kurikulum", level, "materials", id)
   );
-
-  const fileRef = ref(storage, filePath);
-  await deleteObject(fileRef);
 
   loadMaterials(level);
 };
