@@ -62,19 +62,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Tambahkan ini di luar DOMContentLoaded
 window.logout = function () {
+
   localStorage.clear();
 
-  const pathParts = window.location.pathname.split("/");
+  const origin = window.location.origin;
+  const repo = window.location.pathname.split("/")[1];
 
-  // Jika pakai GitHub Pages (ada nama repo)
-  if (pathParts.length > 2) {
-    const repo = pathParts[1];
-    window.location.href = `/${repo}/login.html`;
-  } else {
-    // Jika local / root
-    window.location.href = "/login.html";
-  }
+  window.location.href = `${origin}/${repo}/login.html`;
 };
+
 
 
 
