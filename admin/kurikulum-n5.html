@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Kurikulum JLPT N5</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+<!-- GUARD ADMIN -->
+<script type="module" src="../assets/js/admin-guard.js"></script>
+
+<div class="max-w-6xl mx-auto p-6">
+
+  <!-- HEADER -->
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Manajemen Kurikulum JLPT N5</h1>
+    <button id="addModuleBtn"
+      class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+      + Tambah Modul
+    </button>
+  </div>
+
+  <!-- TARGET LEVEL -->
+  <div class="bg-white p-6 rounded shadow mb-6">
+    <h2 class="text-xl font-semibold mb-3">🎯 Target Kompetensi N5</h2>
+    <ul class="list-disc ml-6 text-gray-700 space-y-2">
+      <li>Mampu membaca Hiragana & Katakana</li>
+      <li>Menguasai ±100 Kanji dasar</li>
+      <li>Kosakata ±800 kata</li>
+      <li>Mampu percakapan sehari-hari dasar</li>
+      <li>Lulus simulasi JLPT minimal 60%</li>
+    </ul>
+    <p class="mt-3 text-sm text-gray-500">
+      Durasi Ideal: 16 Minggu (4 Bulan)
+    </p>
+  </div>
+
+  <!-- MODULE LIST -->
+  <div id="moduleList" class="grid md:grid-cols-2 gap-6"></div>
+
+</div>
+
+<script type="module" src="../assets/js/kurikulum-n5.js"></script>
+
+</body>
+</html>
