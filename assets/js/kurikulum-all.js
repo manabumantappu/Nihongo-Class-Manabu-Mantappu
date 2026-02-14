@@ -12,7 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
   init();
 });
 
-function init() {
+async function init() {
+
   const container = document.getElementById("kurikulumContainer");
   if (!container) return;
 
@@ -24,12 +25,14 @@ function init() {
     N1: { durasi: "12–18 Bulan", deskripsi: "Advanced" }
   };
 
-  Object.keys(programs).forEach(level => {
-    renderLevel(container, level, programs[level]);
-  });
+  container.innerHTML = "";
+
+  for (const level of Object.keys(programs)) {
+    await renderLevel(container, level, programs[level]);
+  }
 }
 
-function renderLevel(container, level, data) {
+async function renderLevel(container, level, data) {
 
   container.innerHTML += `
     <div class="bg-white p-6 rounded-xl shadow space-y-4 mb-6">
@@ -55,8 +58,8 @@ function renderLevel(container, level, data) {
     </div>
   `;
 
-  ensureLevelDocument(level);
-  loadCategories(level);
+  await ensureLevelDocument(level);
+  await loadCategories(level);
 }
 
 // ===============================
@@ -88,7 +91,7 @@ window.addCategory = async (level) => {
     }
   );
 
-  loadCategories(level);
+  await loadCategories(level);
 };
 
 async function loadCategories(level) {
@@ -150,7 +153,7 @@ async function loadCategories(level) {
 
 window.deleteCategory = async (level, id) => {
   await deleteDoc(doc(db, "kurikulum", level, "categories", id));
-  loadCategories(level);
+  await loadCategories(level);
 };
 
 // ===============================
@@ -189,7 +192,7 @@ window.saveMaterial = async (level, catId) => {
   titleInput.value = "";
   urlInput.value = "";
 
-  loadMaterials(level, catId);
+  await loadMaterials(level, catId);
 };
 
 async function loadMaterials(level, catId) {
@@ -226,5 +229,5 @@ window.deleteMaterial = async (level, catId, id) => {
   await deleteDoc(
     doc(db, "kurikulum", level, "categories", catId, "materials", id)
   );
-  loadMaterials(level, catId);
+  await loadMaterials(level, catId);
 };
