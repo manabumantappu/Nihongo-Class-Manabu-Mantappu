@@ -62,13 +62,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Tambahkan ini di luar DOMContentLoaded
 window.logout = function () {
-
   localStorage.clear();
-
-  const origin = window.location.origin;
-  const repo = window.location.pathname.split("/")[1];
-
-  window.location.href = `${origin}/${repo}/login.html`;
+  window.location.href = "../login.html";
 };
 
 
