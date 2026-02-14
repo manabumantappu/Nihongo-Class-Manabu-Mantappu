@@ -5,8 +5,7 @@ import {
   getDocs,
   doc,
   deleteDoc,
-  updateDoc,
-  getDoc
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const moduleList = document.getElementById("moduleList");
@@ -15,43 +14,35 @@ const addModuleBtn = document.getElementById("addModuleBtn");
 // ==========================
 // LOAD MODULES
 // ==========================
-
 async function loadModules() {
   moduleList.innerHTML = "";
 
-  const querySnapshot = await getDocs(
+  const snapshot = await getDocs(
     collection(db, "kurikulum", "N5", "modules")
   );
 
-  querySnapshot.forEach((document) => {
-    const data = document.data();
+  snapshot.forEach((d) => {
+    const data = d.data();
 
     moduleList.innerHTML += `
-      <div class="bg-white p-5 rounded shadow relative">
-        <h3 class="text-lg font-bold mb-2">${data.namaModule}</h3>
-        
-        <p class="text-gray-600 text-sm mb-3">
-          ${data.deskripsi}
-        </p>
+      <div class="bg-white p-5 rounded shadow">
+        <h3 class="text-lg font-bold">${data.namaModule}</h3>
+        <p class="text-sm text-gray-600 mt-2">${data.deskripsi || ""}</p>
+        <p class="text-xs text-gray-400 mt-2">Target: ${data.target || "-"}</p>
 
-        <p class="text-xs text-gray-400 mb-3">
-          Target: ${data.target}
-        </p>
-
-        <div class="flex gap-2">
-          <button onclick="editModule('${document.id}')"
-            class="bg-yellow-500 text-white px-3 py-1 rounded text-sm">
+        <div class="flex gap-2 mt-4">
+          <button data-id="${d.id}" class="editBtn bg-yellow-500 text-white px-3 py-1 rounded text-sm">
             Edit
           </button>
-
-          <button onclick="deleteModule('${document.id}')"
-            class="bg-red-500 text-white px-3 py-1 rounded text-sm">
+          <button data-id="${d.id}" class="deleteBtn bg-red-500 text-white px-3 py-1 rounded text-sm">
             Hapus
           </button>
         </div>
       </div>
     `;
   });
+
+  attachEvents();
 }
 
 loadModules();
@@ -59,13 +50,13 @@ loadModules();
 // ==========================
 // TAMBAH MODULE
 // ==========================
-
 addModuleBtn.addEventListener("click", async () => {
-  const namaModule = prompt("Nama Module:");
+
+  const namaModule = prompt("Nama Modul:");
   if (!namaModule) return;
 
-  const deskripsi = prompt("Deskripsi Module:");
-  const target = prompt("Target Pembelajaran Module:");
+  const deskripsi = prompt("Deskripsi Modul:");
+  const target = prompt("Target Modul:");
 
   await addDoc(collection(db, "kurikulum", "N5", "modules"), {
     namaModule,
@@ -74,47 +65,50 @@ addModuleBtn.addEventListener("click", async () => {
     createdAt: new Date()
   });
 
+  alert("Modul berhasil ditambahkan");
   loadModules();
 });
 
 // ==========================
-// EDIT MODULE
+// EVENT EDIT & DELETE
 // ==========================
+function attachEvents() {
 
-window.editModule = async (id) => {
-  const docRef = doc(db, "kurikulum", "N5", "modules", id);
-  const docSnap = await getDoc(docRef);
+  // DELETE
+  document.querySelectorAll(".deleteBtn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const id = btn.dataset.id;
 
-  if (!docSnap.exists()) {
-    alert("Data tidak ditemukan");
-    return;
-  }
+      if (!confirm("Yakin hapus modul ini?")) return;
 
-  const data = docSnap.data();
-
-  const namaModule = prompt("Edit Nama Module:", data.namaModule);
-  if (!namaModule) return;
-
-  const deskripsi = prompt("Edit Deskripsi:", data.deskripsi);
-  const target = prompt("Edit Target:", data.target);
-
-  await updateDoc(docRef, {
-    namaModule,
-    deskripsi,
-    target,
-    updatedAt: new Date()
+      await deleteDoc(doc(db, "kurikulum", "N5", "modules", id));
+      loadModules();
+    });
   });
 
-  loadModules();
-};
+  // EDIT
+  document.querySelectorAll(".editBtn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const id = btn.dataset.id;
 
-// ==========================
-// DELETE MODULE
-// ==========================
+      const namaModule = prompt("Nama baru:");
+      if (!namaModule) return;
 
-window.deleteModule = async (id) => {
-  if (!confirm("Yakin ingin hapus module ini?")) return;
+      const deskripsi = prompt("Deskripsi baru:");
+      const target = prompt("Target baru:");
 
-  await deleteDoc(doc(db, "kurikulum", "N5", "modules", id));
-  loadModules();
-};
+      await updateDoc(
+        doc(db, "kurikulum", "N5", "modules", id),
+        {
+          namaModule,
+          deskripsi,
+          target,
+          updatedAt: new Date()
+        }
+      );
+
+      loadModules();
+    });
+  });
+
+}
