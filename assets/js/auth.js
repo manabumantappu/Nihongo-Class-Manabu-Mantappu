@@ -75,9 +75,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("loginForm");
 
   if (form) {
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      window.login();
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();   // 🔥 WAJIB
+      await window.login(); // tunggu login selesai
     });
   }
 });
+
